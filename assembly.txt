@@ -1,0 +1,63 @@
+LDI $0   # Carrega acumulador com o valor 0
+NOP
+STA @511
+STA @288 # Armazena o valor do acumulador em HEX0
+STA @289 # Armazena o valor do acumulador em HEX1
+STA @290 # Armazena o valor do acumulador em HEX2
+STA @291 # Armazena o valor do acumulador em HEX3
+STA @292 # Armazena o valor do acumulador em HEX4
+STA @293 # Armazena o valor do acumulador em HEX5
+LDI $0   # Carrega acumulador com o valor 0
+STA @256 # Aramzena o valor do bit0 do acumulador no LDR0 ~ LDR7
+STA @257 # Aramzena o valor do bit0 do acumulador no LDR8
+STA @258 # Aramzena o valor do bit0 do acumulador no LDR9
+LDI $0  # Carrega acumulador com o valor 0
+STA @0  # Armazena o valor do acumulador em MEM[0] (constante 0)
+LDI $1  # Carrega  acumulador com o valor 1
+STA @1  # Armazena o valor do acumulador em MEM[1] (constante 1)
+LDI $10 # Carrega  acumulador com o valor 10
+STA @2  # Armazena o valor do acumulador em MEM[2] (constante 10)
+LDI $0 # Carrega acumulador com o valor 0
+STA @3 # Armazena o valor do acumulador em MEM[3] (unidade)
+STA @4 # Armazena o valor do acumulador em MEM[4] (dezena)
+STA @5 # Armazena o valor do acumulador em MEM[5] (centena)
+STA @6 # Armazena o valor do acumulador em MEM[6] (unidade de milhar)
+STA @7 # Armazena o valor do acumulador em MEM[7] (dezena de milhar)
+STA @8 # Armazena o valor do acumulador em MEM[8] (centena de milhar)
+LDI $9 # Carrega acumulador com o valor 9
+STA @9 # Armazena o valor do acumulador em MEM[9] (limite de unidade)
+STA @10 # Armazena o valor do acumulador em MEM[10] (limite de dezena)
+STA @11 # Armazena o valor do acumulador em MEM[11] (limite de centena)
+STA @12 # Armazena o valor do acumulador em MEM[12] (limite de unidade de milhar)
+STA @13 # Armazena o valor do acumulador em MEM[13] (limite de dezena de milhar)
+STA @14 # Armazena o valor do acumulador em MEM[14] (limite de centena de milhar)
+LDA @352  # Carrega acumulador com valor de KEY0 -------------- ROTINA PRINCIPAL
+CEQ @0 # Verifica se KEY0 está solto (0 => solto, 1 => pressionado)
+LDI $0 # Carrega 0 no acumulador
+STA @511 # Limpa leitura de KEY0
+JEQ @33 # Volta pro início se botão 0 não foi pressionado
+JSR @40 # Pula para sub-rotina de incremento
+JMP @33 # Volta pro início ao retornar da sub-rotina
+LDA @3 # Carrega no acumulador o valor das unidades ----------- SUB-ROTINA DE INCREMENTO (unidades)
+SOMA @1 # Soma um nesse valor
+STA @3  # Atualiza o valor das unidades na memória
+STA @288 # Atualiza o valor do display hexadecimal das unidades
+LDA @2 # Carrega no acumulador o valor 10
+CEQ @3 # Compara unidades com 10
+JEQ @48 # Se estourou as unidades, atualiza
+RET
+LDI $0   # Carrega 0 no acumulador
+STA @3   # Grava 0 no contador das unidades
+STA @288 # Grava 0 no display hexadecimal das unidades
+LDA @4  # Carrega no acumulador o valor das DEZENAS ----------- SUB-ROTINA DE INCREMENTO (dezenas)
+SOMA @1 # Soma um nesse valor
+STA @4  # Atualiza o valor das dezenas na memória
+STA @289 # Atualiza o valor do display hexadecimal das dezenas
+LDA @2 # Carrega no acumulador o valor 10
+CEQ @4 # Compara dezenas com 10
+JEQ @59 # Se estourou as dezenas, atualiza
+RET
+LDI $0   # Carrega 0 no acumulador
+STA @4   # Grava 0 no contador das dezenas
+STA @289 # Grava 0 no display hexadecimal das dezenas
+RET
