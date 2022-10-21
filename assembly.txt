@@ -36,34 +36,32 @@ STA @15     # Grava valor 0 em MEM[15] (flag de inibir contagem)
 LDA @15   # Carrega acumulador com valor da flag de inibir contagem -------------- ROTINA PRINCIPAL (35)
 CEQ @0    # Compara flag de inibir contagem com 0
 JEQ @39   # Se for igual, prossegue com a verificação das KEYs
-JSR @104   # Inibir contagem ativa, desvia para o fim do programa
+JSR @104  # Inibir contagem ativa, desvia para o fim do programa
 LDA @352  # Carrega no acumulador o valor de KEY0 ------------ Inicia KEY0
 CEQ @0    # Compara com o valor 0
-LDI $0    # Carrega acumulador com valor 0
-STA @511  # Limpa leitura de KEY0
-JEQ @45   # Pula para leitura de KEY1 se KEY0 não foi pressionado
-JSR @52   # Se KEY0 foi pressionado, segue para sub-rotina de incremento
+JEQ @43   # Pula para leitura de KEY1 se KEY0 não foi pressionado
+JSR @48   # Se KEY0 foi pressionado, segue para sub-rotina de incremento
 LDA @353  # Carrega no acumulador o valor de KEY1 ------------ Inicia KEY1
 CEQ @0    # Compara com 0
-LDI $0    # Carrega acumulador com 0
-STA @510  # Limpa leitura de KEY1
 JEQ @35   # Se KEY1 não foi pressionado, retorna ao loop principal
-JSR @78   # Se KEY1 foi pressionado, segue para sub-rotina de configuração de limite
+JSR @76   # Se KEY1 foi pressionado, segue para sub-rotina de configuração de limite
 JMP @35   # Ao retornar da sub-rotina, volta ao loop principal
-LDA @9      # Carrega no acumulador o limite das unidades --------------------- ROTINA INCREMENTO (52)
+LDI $0      # Carrega acumulador com valor 0 ------------------------------------- ROTINA INCREMENTO (52)
+STA @511    # Limpa leitura de KEY0
+LDA @9      # Carrega no acumulador o limite das unidades 
 CEQ @3      # Compara unidade com seu respectivo limite
-JEQ @56     # Se for igual, verifica as dezenas
-JMP @59     # Se não for igual, segue direto para a parte de incrementa
+JEQ @54     # Se for igual, verifica as dezenas
+JMP @57     # Se não for igual, segue direto para a parte de incrementa
 LDA @10     # Carrega no acumulador o limite das dezenas
 CEQ @4      # Compara dezena com seu respectivo limite
-JEQ @104     # Se for igual, pula para o fim do programa (houve estouro)
+JEQ @104    # Se for igual, pula para o fim do programa (houve estouro)
 LDA @3      # Carrega no acumulador o valor das unidades -------- incrementa unidade
 SOMA @1     # Soma um nesse valor
 STA @3      # Atualiza o valor das unidades na memória
 STA @288    # Atualiza o valor do display hexadecimal das unidades
 LDA @2      # Carrega no acumulador o valor 10
 CEQ @3      # Compara unidades com 10
-JEQ @67     # Se estourou as unidades, atualiza
+JEQ @65     # Se estourou as unidades, atualiza
 RET         # Se não estourou, retorna ao loop principal
 LDI $0      # Houve estouro de unidades => Carrega acumulador com 0
 STA @3      # Grava 0 no contador das unidades
@@ -74,35 +72,37 @@ STA @4      # Atualiza o valor das dezenas na memória
 STA @289    # Atualiza o valor do display hexadecimal das dezenas
 LDA @2      # Carrega no acumulador o valor 10
 CEQ @4      # Compara dezenas com 10
-JEQ @104     # Se estourou as dezenas, estourou o limite => vai para o final do programa
+JEQ @104    # Se estourou as dezenas, estourou o limite => vai para o final do programa
 RET         # Se não estourou, retorna ao loop principal
-LDA @353  # Carrega o valor de KEY1 no acumulador ---------------------------- ROTINA CONFIGURAÇÃO DE LIMITE (78)
+LDI $0    # Carrega acumulador com 0 ---------------------------- ROTINA CONFIGURAÇÃO DE LIMITE (78)
+STA @510  # Limpa leitura de KEY1
+LDA @353  # Carrega o valor de KEY1 no acumulador 
 CEQ @0    # Compara KEY1 com 0
-LDI $0    # Carrega acumulador com 0
-STA @510  # Limpa KEY1
 JEQ @78   # Se for igual (não pressionado), volta à leitura de KEY1
 LDA @320  # Carrega no acumulador o valor de SW07 (considere que vai de 0 a 9)
 STA @9    # Grava leitura das chaves na memória para limite das unidades
 LDI $1    # Carrega 1 no acumulador
 STA @256  # Grava em LEDR07 para confirmar primeira configuração
+LDI $0    # Carrega acumulador com 0
+STA @510  # Limpa leitura de KEY1
 LDA @353  # Carrega o valor de KEY1 no acumulador ----- config. dezenas
 CEQ @0    # Compara KEY1 com 0
-LDI $0    # Carrega acumulador com 0
-STA @510  # Limpa KEY1
 JEQ @87   # Se for igual (não pressionado), volta à leitura de KEY1
 LDA @320  # Carrega no acumulador o valor de SW07 (considere que vai de 0 a 9)
 STA @10   # Grava leitura das chaves na memória para limite das dezenas
 LDI $3    # Carrega 3 no acumulador
 STA @256  # Grava em LEDR07 para confirmar segunda configuração
+LDI $0    # Carrega acumulador com 0
+STA @510  # Limpa leitura de KEY1
 LDA @353  # Carrega o valor de KEY1 no acumulador ----- pressionar para retornar ao loop
 CEQ @0    # Compara KEY1 com 0
-LDI $0    # Carrega acumulador com 0
-STA @510  # Limpa KEY1
 JEQ @96   # Se for igual (não pressionado), volta à leitura de KEY1
 LDI $0    # Carrega acumulador com 0
 STA @256  # Grava nos LEDR07 (apaga os LEDs)
+LDI $0    # Carrega acumulador com 0
+STA @510  # Limpa leitura de KEY1
 RET
-LDI $1    # Carrega acumulador com 1 --------------------------- FIM DO PROGRAMA (101)
+LDI $1    # Carrega acumulador com 1 --------------------------- FIM DO PROGRAMA (104)
 STA @258  # Grava valor no LEDR9 (acende o LEDR9)
 NOP
-JMP @100  # Fim. Fica preso neste laço.
+JMP @106  # Fim. Fica preso neste laço.

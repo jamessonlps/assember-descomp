@@ -19,8 +19,7 @@ Rotinas (Pseudo-código)
     2.1. Verificação de KEY0
         - Carrega no acumulador o valor de KEY0
         - Compara com o valor 0 gravado em MEM[0]
-        - Carrega no acumulador o valor 0
-        - Limpa a leitura de KEY0 (STA 511)
+       
         - Prossegue para leitura de KEY1 se KEY0 não foi pressionado (JEQ)
         - Se tiver sido pressionado, pula para sub-rotina de incremento (JSR)
         - Após o retorno, prossegue para leitura de KEY1
@@ -28,8 +27,7 @@ Rotinas (Pseudo-código)
     2.2 Verificação de KEY1
         - Carrega no acumulador o valor de KEY1
         - Compara com 0 (MEM[0])
-        - Carrega no acumulador o valor 0
-        - Limpa leitura da KEY1 (STA 510)
+        
         - Se for igual, faz um JEQ para o início do loop principal
         - Se não for igual, pula para sub-rotina de configuração de limite (JSR)
         - Após retornar, JMP para o início
@@ -37,6 +35,9 @@ Rotinas (Pseudo-código)
 
 
 3. Rotina de incremento
+    - Carrega no acumulador o valor 0
+    - Limpa a leitura de KEY0 (STA 511)
+
     - Carrega no acumulador o valor do limite das unidades
     - Compara com o atual valor das unidades
     - Se for igual, verifica as dezenas (JEQ)
@@ -80,30 +81,33 @@ Rotinas (Pseudo-código)
 
 
 4. Rotina de configuração de limites
+    - Carrega no acumulador o valor 0
+    - Limpa leitura da KEY1 (STA 510)
+
     - Carrega no acumulador o valor de KEY1
     - Compara com o valor 0
-    - Carrega no acumulador o valor 0
-    - Limpa leitura de KEY1 (STA 510)
     - Se for igual, pula para o início dessa etapa (JEQ)
     - Se não for igual, carrega no acumulador o valor de SW0-SW3 (considere aqui que não será selecionado números maiores => colocar essa obs no relatório)
     - Grava leitura no endereço de memória do limite das UNIDADES
     - Carrega 1 no acumulador
     - Grava valor nos LED07 para sinalizar primeira configuração
 
+    - Carrega no acumulador o valor 0
+    - Limpa leitura da KEY1 (STA 510)
+
     - Carrega no acumulador o valor de KEY1
     - Compara com o valor 0
-    - Carrega no acumulador o valor 0
-    - Limpa leitura de KEY1 (STA 510)
     - Se for igual, pula para o início dessa segunda etapa (JEQ)
     - Se não for igual, carrega no acumulador o valor de SW0-SW3 (considere aqui que não será selecionado números maiores => colocar essa obs no relatório)
     - Grava leitura no endereço de memória do limite das DEZENAS
     - Carrega 3 no acumulador
     - Grava valor nos LED07 para sinalizar segunda configuração configuração
 
+    - Carrega no acumulador o valor 0
+    - Limpa leitura da KEY1 (STA 510)
+
     - Carrega no acumulador o valor de KEY1
     - Compara com o valor 0
-    - Carrega no acumulador o valor 0
-    - Limpa leitura de KEY1 (STA 510)
     - Se for igual, pula para o início dessa terceira etapa (JEQ)
     - Se não for igual, carrega no acumulador o valor 0
     - Grava esse valor nos LED07 (para apagar)
