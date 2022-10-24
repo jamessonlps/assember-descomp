@@ -1,6 +1,8 @@
+:SETUP
 LDI $0      # Carrega acumulador com o valor 0
 STA @510    # Limpa KEY1
 STA @511    # Limpa KEY0
+STA @509    # Limpa KEY_RESET
 STA @288    # Armazena o valor do acumulador em HEX0
 STA @289    # Armazena o valor do acumulador em HEX1
 STA @290    # Armazena o valor do acumulador em HEX2
@@ -31,78 +33,165 @@ STA @11     # Armazena o valor do acumulador em MEM[11] (limite de centena)
 STA @12     # Armazena o valor do acumulador em MEM[12] (limite de unidade de milhar)
 STA @13     # Armazena o valor do acumulador em MEM[13] (limite de dezena de milhar)
 STA @14     # Armazena o valor do acumulador em MEM[14] (limite de centena de milhar)
-LDI $0      # Carrega acumulador com valor 0
-STA @15     # Grava valor 0 em MEM[15] (flag de inibir contagem)
-LDA @15   # Carrega acumulador com valor da flag de inibir contagem -------------- ROTINA PRINCIPAL (35)
-CEQ @0    # Compara flag de inibir contagem com 0
-JEQ @39   # Se for igual, prossegue com a verificação das KEYs
-JSR @104  # Inibir contagem ativa, desvia para o fim do programa
+LDI $128 #
+STA @16  # MEM[16] = Máscara 10000000
+LDI $64  #
+STA @17  # MEM[17] = Máscara 01000000
+LDI $32  #
+STA @18  # MEM[18] = Máscara 00100000
+LDI $16  #
+STA @19  # MEM[19] = Máscara 00010000
+LDI $12  #
+STA @20  # MEM[20] = Máscara 00001100
+LDI $10  #
+STA @21  # MEM[21] = Máscara 00001010
+:ROTINA_PRINCIPAL
 LDA @352  # Carrega no acumulador o valor de KEY0 ------------ Inicia KEY0
 CEQ @0    # Compara com o valor 0
-JEQ @43   # Pula para leitura de KEY1 se KEY0 não foi pressionado
-JSR @48   # Se KEY0 foi pressionado, segue para sub-rotina de incremento
+JEQ @CHECA_KEY1   # Pula para leitura de KEY1 se KEY0 não foi pressionado
+JSR @ROTINA_INCREMENTO   # Se KEY0 foi pressionado, segue para sub-rotina de incremento
+:CHECA_KEY1
 LDA @353  # Carrega no acumulador o valor de KEY1 ------------ Inicia KEY1
 CEQ @0    # Compara com 0
-JEQ @35   # Se KEY1 não foi pressionado, retorna ao loop principal
-JSR @76   # Se KEY1 foi pressionado, segue para sub-rotina de configuração de limite
-JMP @35   # Ao retornar da sub-rotina, volta ao loop principal
+JEQ @CHECA_KEY_RESET   # Se KEY1 não foi pressionado, pula para leitura do RESET
+JSR @ROTINA_CONFIGURAÇÃO_LIMITE   # Se KEY1 foi pressionado, segue para sub-rotina de configuração de limite
+:CHECA_KEY_RESET
+LDA @356   # Carrega no acumulador o valor de KEY_RESET ------------ Inicia KEY_RESET
+CEQ @1     # Compara com 1
+JEQ @SETUP # Se for igual, vai pro início do programa
+JMP @ROTINA_PRINCIPAL   # Ao retornar da sub-rotina, volta ao loop principal
+:ROTINA_INCREMENTO
 LDI $0      # Carrega acumulador com valor 0 ------------------------------------- ROTINA INCREMENTO (52)
 STA @511    # Limpa leitura de KEY0
 LDA @9      # Carrega no acumulador o limite das unidades 
 CEQ @3      # Compara unidade com seu respectivo limite
-JEQ @54     # Se for igual, verifica as dezenas
-JMP @57     # Se não for igual, segue direto para a parte de incrementa
+JEQ @VERIFICA_DEZENA     # Se for igual, verifica as dezenas
+JMP @INCREMENTA_UNIDADE     # Se não for igual, segue direto para a parte de incrementa
+:VERIFICA_DEZENA
 LDA @10     # Carrega no acumulador o limite das dezenas
 CEQ @4      # Compara dezena com seu respectivo limite
-JEQ @104    # Se for igual, pula para o fim do programa (houve estouro)
+JEQ @ROTINA_FIM_PROGRAMA    # Se for igual, pula para o fim do programa (houve estouro)
+:INCREMENTA_UNIDADE
 LDA @3      # Carrega no acumulador o valor das unidades -------- incrementa unidade
 SOMA @1     # Soma um nesse valor
 STA @3      # Atualiza o valor das unidades na memória
 STA @288    # Atualiza o valor do display hexadecimal das unidades
 LDA @2      # Carrega no acumulador o valor 10
 CEQ @3      # Compara unidades com 10
-JEQ @65     # Se estourou as unidades, atualiza
+JEQ @CORRIGE_UNIDADE     # Se estourou as unidades, atualiza
 RET         # Se não estourou, retorna ao loop principal
+:CORRIGE_UNIDADE
 LDI $0      # Houve estouro de unidades => Carrega acumulador com 0
 STA @3      # Grava 0 no contador das unidades
 STA @288    # Grava 0 no display hexadecimal das unidades
+:INCREMENTA_DEZENA
 LDA @4      # Carrega no acumulador o valor das DEZENAS ----------- incrementa dezena
 SOMA @1     # Soma um nesse valor
 STA @4      # Atualiza o valor das dezenas na memória
 STA @289    # Atualiza o valor do display hexadecimal das dezenas
 LDA @2      # Carrega no acumulador o valor 10
 CEQ @4      # Compara dezenas com 10
-JEQ @104    # Se estourou as dezenas, estourou o limite => vai para o final do programa
+JEQ @ROTINA_FIM_PROGRAMA    # Se estourou as dezenas, estourou o limite => vai para o final do programa
 RET         # Se não estourou, retorna ao loop principal
-LDI $0    # Carrega acumulador com 0 ---------------------------- ROTINA CONFIGURAÇÃO DE LIMITE (78)
+:ROTINA_CONFIGURAÇÃO_LIMITE
+LDI $1
+STA @257
+LDI $0    # Carrega acumulador com 0 ---------------------------- ROTINA CONFIGURAÇÃO DE LIMITE
 STA @510  # Limpa leitura de KEY1
+:LE_KEY1_1
 LDA @353  # Carrega o valor de KEY1 no acumulador 
 CEQ @0    # Compara KEY1 com 0
-JEQ @78   # Se for igual (não pressionado), volta à leitura de KEY1
+JEQ @LE_KEY1_1   # Se for igual (não pressionado), volta à leitura de KEY1
 LDA @320  # Carrega no acumulador o valor de SW07 (considere que vai de 0 a 9)
+ANDOP @16
+CEQ @16                      # Aplica máscara
+JEQ @CORRIGE_LIMITE_9_UNIDADE
+LDA @320
+ANDOP @17
+CEQ @17
+JEQ @CORRIGE_LIMITE_9_UNIDADE
+LDA @320
+ANDOP @18
+CEQ @18
+JEQ @CORRIGE_LIMITE_9_UNIDADE
+LDA @320
+ANDOP @19
+CEQ @19
+JEQ @CORRIGE_LIMITE_9_UNIDADE
+LDA @320
+ANDOP @20
+CEQ @20
+JEQ @CORRIGE_LIMITE_9_UNIDADE
+LDA @320
+ANDOP @21
+CEQ @21                      # Aplica máscara
+JEQ @CORRIGE_LIMITE_9_UNIDADE
+LDA @320
+JMP @GRAVA_LIMITE_UNIDADE    # Limite permitido
+:CORRIGE_LIMITE_9_UNIDADE
+LDI $9                   # Limite não permitido, então passa a ser 9
+JMP @GRAVA_LIMITE_UNIDADE
+:GRAVA_LIMITE_UNIDADE
 STA @9    # Grava leitura das chaves na memória para limite das unidades
 LDI $1    # Carrega 1 no acumulador
 STA @256  # Grava em LEDR07 para confirmar primeira configuração
 LDI $0    # Carrega acumulador com 0
 STA @510  # Limpa leitura de KEY1
+:LE_KEY1_2
 LDA @353  # Carrega o valor de KEY1 no acumulador ----- config. dezenas
 CEQ @0    # Compara KEY1 com 0
-JEQ @87   # Se for igual (não pressionado), volta à leitura de KEY1
+JEQ @LE_KEY1_2   # Se for igual (não pressionado), volta à leitura de KEY1
 LDA @320  # Carrega no acumulador o valor de SW07 (considere que vai de 0 a 9)
+ANDOP @16
+CEQ @16                      # Aplica máscara
+JEQ @CORRIGE_LIMITE_9_DEZENA
+LDA @320
+ANDOP @17
+CEQ @17
+JEQ @CORRIGE_LIMITE_9_DEZENA
+LDA @320
+ANDOP @18
+CEQ @18
+JEQ @CORRIGE_LIMITE_9_DEZENA
+LDA @320
+ANDOP @19
+CEQ @19
+JEQ @CORRIGE_LIMITE_9_DEZENA
+LDA @320
+ANDOP @20
+CEQ @20
+JEQ @CORRIGE_LIMITE_9_DEZENA
+LDA @320
+ANDOP @21
+CEQ @21
+JEQ @CORRIGE_LIMITE_9_DEZENA
+LDA @320
+JMP @GRAVA_LIMITE_DEZENA
+:CORRIGE_LIMITE_9_DEZENA
+LDI $9                   # Limite não permitido, então passa a ser 9
+JMP @GRAVA_LIMITE_DEZENA
+:GRAVA_LIMITE_DEZENA
 STA @10   # Grava leitura das chaves na memória para limite das dezenas
 LDI $3    # Carrega 3 no acumulador
 STA @256  # Grava em LEDR07 para confirmar segunda configuração
 LDI $0    # Carrega acumulador com 0
 STA @510  # Limpa leitura de KEY1
+:LE_KEY1_3
 LDA @353  # Carrega o valor de KEY1 no acumulador ----- pressionar para retornar ao loop
 CEQ @0    # Compara KEY1 com 0
-JEQ @96   # Se for igual (não pressionado), volta à leitura de KEY1
+JEQ @LE_KEY1_3   # Se for igual (não pressionado), volta à leitura de KEY1
 LDI $0    # Carrega acumulador com 0
 STA @256  # Grava nos LEDR07 (apaga os LEDs)
+STA @257  # Apaga LDER8
 LDI $0    # Carrega acumulador com 0
 STA @510  # Limpa leitura de KEY1
 RET
+:ROTINA_FIM_PROGRAMA
 LDI $1    # Carrega acumulador com 1 --------------------------- FIM DO PROGRAMA (104)
 STA @258  # Grava valor no LEDR9 (acende o LEDR9)
+:LOOP_INFINITO
+LDA @356
+CEQ @1
+JEQ @SETUP
 NOP
-JMP @106  # Fim. Fica preso neste laço.
+JMP @LOOP_INFINITO  # Fim. Fica preso neste laço até resetar.

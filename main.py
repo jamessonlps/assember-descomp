@@ -9,8 +9,7 @@ class Assembler:
         output_path="./output/assembly_translated.txt"
     ):
         """
-            Assembler mais simples que esse, impossível. Vou assumir que você fez o `.txt` direitinho, hein?
-            Não vem falar caquinha se der ruim por aí.
+            Seguir o modelo do arquivo `assembly.txt` para escrever as instruções
             `input_path`: Caminho do arquivo .txt de entrada
             `start_index_memory`: Índice a partir do qual inicia a contagem das posições de cada instrução na memória
             `output_path`: Caminho do arquivo .txt de saída
@@ -18,6 +17,7 @@ class Assembler:
         self.input_path = input_path
         self.start_index_memory = start_index_memory
         self.output_path = output_path
+        self.labels_addrs = {}
 
     def translate(self):
         """
@@ -29,6 +29,7 @@ class Assembler:
         commands = []
         
         with open(file=self.input_path, mode="r", encoding="utf-8") as file_input:
+            self.get_labels_addresses()
             lines = file_input.readlines()
             for line in lines:
                 line = line.strip("\n")
@@ -58,6 +59,17 @@ class Assembler:
                 file_output.write("\n") 
 
 
+    def get_labels_addresses(self):
+        pc_counter = 0
+        with open(file=self.input_path, mode="r", encoding="utf-8") as file_input:
+            lines = file_input.readlines()
+            for line in lines:
+                if line.startswith(":"):
+                    label = line[1:-1]
+                    self.labels_addrs[label] = pc_counter
+                else:
+                    pc_counter+=1
+
     def get_instruction_mnemonic(self, line_splitted):
         """
             Retorna o opcode de 4 bits referente a instrução da linha
@@ -77,7 +89,13 @@ class Assembler:
             `line`: linha de instrução assembly 
         """
         if (line_splitted.__len__() > 1) and (("@" in line_splitted[1]) or ("$" in line_splitted[1])):
-            return get_binary_from_int(int(line_splitted[1][1:]), 9)
+            value = line_splitted[1][1:]
+            try:
+                address = int(value)
+                return get_binary_from_int(address, 9)
+            except:
+                # Pega endereço correspondente à label
+                return get_binary_from_int(self.labels_addrs[value], 9)
         else:
             return None
 
