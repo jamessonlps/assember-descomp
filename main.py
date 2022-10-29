@@ -1,4 +1,4 @@
-from definitions import MNEMONICS
+from definitions import MNEMONICS, REGS, JMPS
 from utils import *
 
 class Assembler:
@@ -19,6 +19,7 @@ class Assembler:
         self.output_path = output_path
         self.labels_addrs = {}
 
+
     def translate(self):
         """
             Traduz o arquivo assembly para linguagem de máquina, utilizando
@@ -36,19 +37,28 @@ class Assembler:
                 line_splitted = line.split()
 
                 instru_mnemonic = self.get_instruction_mnemonic(line_splitted)
-                value = self.get_addr_or_immediate(line_splitted)
+                # value = self.get_addr_or_immediate(line)
+                reg, address = self.get_addr_or_immediate(line)
                 comment = self.get_comment(line)
 
                 if instru_mnemonic is not None:
                     instruction = f"tmp({index_counter})\t := " + instru_mnemonic
+
+                    # Se não houver registrador especificado, passa o R0
+                    if reg is not None:
+                        instruction += f' & {reg}'
+                    else:
+                        instruction += f' & R0'
                     
-                    if value is not None:
-                        instruction += f' & "{value}";'
+                    # Se não houver endereço, usa "000000000"
+                    if address is not None:
+                        instruction += f' & "{address}";'
                     else:
                         instruction += f' & "000000000";'
 
+                    # Usa comentário, se houver
                     if comment is not None:
-                        instruction += f' -- {line_splitted[0]} {line_splitted[1]}  {comment}'
+                        instruction += f' -- {comment}'
 
                     commands.append(instruction)
                     index_counter += 1
@@ -70,6 +80,7 @@ class Assembler:
                 else:
                     pc_counter+=1
 
+
     def get_instruction_mnemonic(self, line_splitted):
         """
             Retorna o opcode de 4 bits referente a instrução da linha
@@ -83,21 +94,49 @@ class Assembler:
             return None
 
 
-    def get_addr_or_immediate(self, line_splitted):
+    def get_addr_or_immediate(self, line: str):
         """
             Retorna valor do imediato ou endereço em binário
             `line`: linha de instrução assembly 
         """
-        if (line_splitted.__len__() > 1) and (("@" in line_splitted[1]) or ("$" in line_splitted[1])):
-            value = line_splitted[1][1:]
-            try:
-                address = int(value)
-                return get_binary_from_int(address, 9)
-            except:
-                # Pega endereço correspondente à label
-                return get_binary_from_int(self.labels_addrs[value], 9)
+        line_splitted = line.split()
+        reg = None
+        address = None
+
+        # Instruções NOP e labels
+        if len(line_splitted) == 1:
+            return reg, address
+        
+        value1 = line_splitted[1]
+        
+        if ("@" in value1):
+            address = get_binary_from_int(self.labels_addrs[value1[1:]], 9)
         else:
-            return None
+            if value1.upper() in REGS.keys():
+                reg = value1.upper()
+
+        if len(line_splitted) > 2:
+            value2 = line_splitted[2]
+            if ("@" in value2) or ("$" in value2):
+                address = get_binary_from_int(int(value2[1:]))
+
+        return reg, address
+
+
+    def get_register(self, line_splitted):
+        """
+            Retorna o registrador utilizado na operação
+            `line_splitted`: array de strings da linha de instrução assembly
+        """
+        if (line_splitted.__len__() > 1):
+            reg = line_splitted[1][:]
+            try:
+                if reg in REGS.keys():
+                    return reg
+                else:
+                    return None
+            except:
+                return None
 
 
     def get_comment(self, line: str):
@@ -112,5 +151,5 @@ class Assembler:
             return None
             
 
-my_assemb = Assembler()
+my_assemb = Assembler(input_path='./teste.txt', output_path='./output/teste.txt')
 my_assemb.translate()
