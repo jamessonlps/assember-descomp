@@ -115,17 +115,28 @@ JMP @AGUARDA_KEY0_PARA_CONFIGURAR_DEZENA_HORA
 LDI R0 $0   # R0 = 0
 STA R0 @511 # Limpa leitura de KEY0
 LDA R0 @320 # R0 = SW0 ~ SW7
+STA R0 @25  # Grava dezena de hora
 CLT R0 @3   # Verifica se SW < 3
 JLT @ATRIBUI_SW_A_DEZENA_HORA
 JMP @ATRIBUI_0_A_DEZENA_HORA
 :ATRIBUI_SW_A_DEZENA_HORA
+LDA R1 @24 # Carrega em R1 unidade de hora
+CLT R1 @4  # Compara R1 < 4
+JLT @SELECAO_DE_HORA_VALIDA
+LDA R1 @25 # Carrega em R1 dezena de hora
+CLT R1 @2  # Compara R1 < 2
+JLT @SELECAO_DE_HORA_VALIDA
+LDI R1 $3  # R1 = 3
+STA R1 @24 # Atribui 3 à unidade de hora
+STA R1 @292 # Grava 3 no HEX4
+:SELECAO_DE_HORA_VALIDA
 STA R0 @25  # Grava leitura das chaves no valor de dezena de hora
 STA R0 @293 # Grava leitura das chaves no HEX4
 JMP @DEZENA_HORA_OK
 :ATRIBUI_0_A_DEZENA_HORA
 LDI R0 $0
-STA R0 @25  # Grava 0 nas unidades de hora
-STA R0 @293 # Grava 0 no HEX4
+STA R0 @25  # Grava 0 nas dezenas de hora
+STA R0 @293 # Grava 0 no HEX5
 :DEZENA_HORA_OK
 LDI R0 $15  # R0 = 15
 STA R0 @256 # Acende LEDR3 para indicar conf. de dezena de hora
