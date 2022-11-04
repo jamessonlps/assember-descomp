@@ -60,7 +60,7 @@ tmp(58)	 := JMP & R0 & "000110111";
 tmp(59)	 := LDI & R0 & "000000000"; --  R0 = 0
 tmp(60)	 := STA & R0 & "111111111"; --  Limpa leitura de KEY0
 tmp(61)	 := LDA & R0 & "101000000"; --  R0 = SW0 ~ SW7
-tmp(62)	 := CLT & R0 & "000001010"; --  Verifica se SW < 10
+tmp(62)	 := CLT & R0 & "000000110"; --  Verifica se SW < 6
 tmp(63)	 := JLT & R0 & "001000001";
 tmp(64)	 := JMP & R0 & "001000100";
 tmp(65)	 := STA & R0 & "000010111"; --  Grava leitura das chaves no valor de dezena de minuto
@@ -96,7 +96,7 @@ tmp(94)	 := JMP & R0 & "001011011";
 tmp(95)	 := LDI & R0 & "000000000"; --  R0 = 0
 tmp(96)	 := STA & R0 & "111111111"; --  Limpa leitura de KEY0
 tmp(97)	 := LDA & R0 & "101000000"; --  R0 = SW0 ~ SW7
-tmp(98)	 := CLT & R0 & "000001010"; --  Verifica se SW < 10
+tmp(98)	 := CLT & R0 & "000000011"; --  Verifica se SW < 3
 tmp(99)	 := JLT & R0 & "001100101";
 tmp(100)	 := JMP & R0 & "001101000";
 tmp(101)	 := STA & R0 & "000011001"; --  Grava leitura das chaves no valor de dezena de hora
