@@ -1,34 +1,211 @@
-tmp(0)	 := LDI & R0 & "000000001";
-tmp(1)	 := STA & R0 & "000000001";
-tmp(2)	 := LDI & R0 & "000000000";
-tmp(3)	 := STA & R0 & "000000000";
-tmp(4)	 := STA & R0 & "100100000";
-tmp(5)	 := STA & R0 & "100100001";
-tmp(6)	 := STA & R0 & "100100010";
-tmp(7)	 := STA & R0 & "100100011";
-tmp(8)	 := STA & R0 & "100100000";
-tmp(9)	 := STA & R0 & "111111111";
-tmp(10)	 := STA & R0 & "111111110";
-tmp(11)	 := LDI & R1 & "000000000";
-tmp(12)	 := LDI & R2 & "000000000";
-tmp(13)	 := LDA & R0 & "101100000";
-tmp(14)	 := CEQ & R0 & "000000001";
-tmp(15)	 := JEQ & R0 & "000010100";
-tmp(16)	 := LDA & R0 & "101100001";
-tmp(17)	 := CEQ & R0 & "000000001";
-tmp(18)	 := JEQ & R0 & "000010110";
-tmp(19)	 := JMP & R0 & "000001101";
-tmp(20)	 := JSR & R0 & "000011000";
-tmp(21)	 := JMP & R0 & "000001101";
-tmp(22)	 := JSR & R0 & "000011101";
-tmp(23)	 := JMP & R0 & "000001101";
-tmp(24)	 := LDI & R0 & "000000000";
-tmp(25)	 := STA & R0 & "111111111";
-tmp(26)	 := SOMA & R1 & "000000001";
-tmp(27)	 := STA & R1 & "100100000";
-tmp(28)	 := RET & R0 & "000000000";
-tmp(29)	 := LDI & R0 & "000000000";
-tmp(30)	 := STA & R0 & "111111110";
-tmp(31)	 := SOMA & R2 & "000000001";
-tmp(32)	 := STA & R2 & "100100001";
-tmp(33)	 := RET & R0 & "000000000";
+tmp(0)	 := LDI & R0 & "000000000";
+tmp(1)	 := STA & R0 & "000000000";
+tmp(2)	 := LDI & R0 & "000000001";
+tmp(3)	 := STA & R0 & "000000001";
+tmp(4)	 := LDI & R0 & "000000010";
+tmp(5)	 := STA & R0 & "000000010";
+tmp(6)	 := LDI & R0 & "000000011";
+tmp(7)	 := STA & R0 & "000000011";
+tmp(8)	 := LDI & R0 & "000000100";
+tmp(9)	 := STA & R0 & "000000100";
+tmp(10)	 := LDI & R0 & "000000110";
+tmp(11)	 := STA & R0 & "000000110";
+tmp(12)	 := LDI & R0 & "000001010";
+tmp(13)	 := STA & R0 & "000001010";
+tmp(14)	 := LDI & R0 & "000000000";
+tmp(15)	 := STA & R0 & "100100000";
+tmp(16)	 := STA & R0 & "100100001";
+tmp(17)	 := STA & R0 & "100100010";
+tmp(18)	 := STA & R0 & "100100011";
+tmp(19)	 := STA & R0 & "100100000";
+tmp(20)	 := STA & R0 & "111111111";
+tmp(21)	 := STA & R0 & "111111110";
+tmp(22)	 := STA & R0 & "111111101";
+tmp(23)	 := STA & R0 & "111111100";
+tmp(24)	 := STA & R0 & "100000000";
+tmp(25)	 := STA & R0 & "100000001";
+tmp(26)	 := STA & R0 & "100000010";
+tmp(27)	 := STA & R0 & "000010100"; --  Unidade de segundo
+tmp(28)	 := STA & R0 & "000010101"; --  Dezena de segundo
+tmp(29)	 := STA & R0 & "000010110"; --  Unidade de minuto
+tmp(30)	 := STA & R0 & "000010111"; --  Dezena de minuto
+tmp(31)	 := STA & R0 & "000011000"; --  Unidade de hora
+tmp(32)	 := STA & R0 & "000011001"; --  Dezena de hora
+tmp(33)	 := LDI & R0 & "000000001"; --  R0 = 1 (Início da sub-rotina de setup do relógio)
+tmp(34)	 := STA & R0 & "100000010"; --  Acende LEDR9
+tmp(35)	 := LDI & R0 & "000000000"; --  R0 = 0
+tmp(36)	 := STA & R0 & "111111110"; --  Limpa leitura de KEY1
+tmp(37)	 := LDA & R0 & "101100000"; --  Lê KEY0
+tmp(38)	 := CEQ & R0 & "000000001"; --  Verifica se KEY0 == 1
+tmp(39)	 := JEQ & R0 & "000101001"; --  Desvia para configuração da unidade de minuto
+tmp(40)	 := JMP & R0 & "000100101";
+tmp(41)	 := LDI & R0 & "000000000"; --  R0 = 0
+tmp(42)	 := STA & R0 & "111111111"; --  Limpa leitura de KEY0
+tmp(43)	 := LDA & R0 & "101000000"; --  R0 = SW0 ~ SW7
+tmp(44)	 := CLT & R0 & "000001010"; --  Verifica se SW < 10
+tmp(45)	 := JLT & R0 & "000101111";
+tmp(46)	 := JMP & R0 & "000110010";
+tmp(47)	 := STA & R0 & "000010110"; --  Grava leitura das chaves no valor de unidade de minuto
+tmp(48)	 := STA & R0 & "100100010"; --  Grava leitura das chaves no HEX2
+tmp(49)	 := JMP & R0 & "000110101";
+tmp(50)	 := LDI & R0 & "000000000";
+tmp(51)	 := STA & R0 & "000010110"; --  Grava 0 nas unidades de minuto
+tmp(52)	 := STA & R0 & "100100010"; --  Grava 0 no HEX2
+tmp(53)	 := LDI & R0 & "000000001"; --  R0 = 1
+tmp(54)	 := STA & R0 & "100000000"; --  Acende LEDR0 para indicar conf. de unidade de minuto
+tmp(55)	 := LDA & R0 & "101100000"; --  Lê KEY0
+tmp(56)	 := CEQ & R0 & "000000001"; --  Verifica se KEY0 == 1
+tmp(57)	 := JEQ & R0 & "000111011"; --  Desvia para configuração da unidade de minuto
+tmp(58)	 := JMP & R0 & "000110111";
+tmp(59)	 := LDI & R0 & "000000000"; --  R0 = 0
+tmp(60)	 := STA & R0 & "111111111"; --  Limpa leitura de KEY0
+tmp(61)	 := LDA & R0 & "101000000"; --  R0 = SW0 ~ SW7
+tmp(62)	 := CLT & R0 & "000001010"; --  Verifica se SW < 10
+tmp(63)	 := JLT & R0 & "001000001";
+tmp(64)	 := JMP & R0 & "001000100";
+tmp(65)	 := STA & R0 & "000010111"; --  Grava leitura das chaves no valor de dezena de minuto
+tmp(66)	 := STA & R0 & "100100011"; --  Grava leitura das chaves no HEX3
+tmp(67)	 := JMP & R0 & "001000111";
+tmp(68)	 := LDI & R0 & "000000000";
+tmp(69)	 := STA & R0 & "000010111"; --  Grava 0 nas dezenas de minuto
+tmp(70)	 := STA & R0 & "100100011"; --  Grava 0 no HEX3
+tmp(71)	 := LDI & R0 & "000000011"; --  R0 = 3
+tmp(72)	 := STA & R0 & "100000000"; --  Acende LEDR1 para indicar conf. de dezena de minuto
+tmp(73)	 := LDA & R0 & "101100000"; --  Lê KEY0
+tmp(74)	 := CEQ & R0 & "000000001"; --  Verifica se KEY0 == 1
+tmp(75)	 := JEQ & R0 & "001001101"; --  Desvia para configuração da unidade de hora
+tmp(76)	 := JMP & R0 & "001001001";
+tmp(77)	 := LDI & R0 & "000000000"; --  R0 = 0
+tmp(78)	 := STA & R0 & "111111111"; --  Limpa leitura de KEY0
+tmp(79)	 := LDA & R0 & "101000000"; --  R0 = SW0 ~ SW7
+tmp(80)	 := CLT & R0 & "000001010"; --  Verifica se SW < 10
+tmp(81)	 := JLT & R0 & "001010011";
+tmp(82)	 := JMP & R0 & "001010110";
+tmp(83)	 := STA & R0 & "000011000"; --  Grava leitura das chaves no valor de unidade de hora
+tmp(84)	 := STA & R0 & "100100100"; --  Grava leitura das chaves no HEX4
+tmp(85)	 := JMP & R0 & "001011001";
+tmp(86)	 := LDI & R0 & "000000000";
+tmp(87)	 := STA & R0 & "000011000"; --  Grava 0 nas unidades de hora
+tmp(88)	 := STA & R0 & "100100100"; --  Grava 0 no HEX4
+tmp(89)	 := LDI & R0 & "000000111"; --  R0 = 7
+tmp(90)	 := STA & R0 & "100000000"; --  Acende LEDR2 para indicar conf. de unidade de hora
+tmp(91)	 := LDA & R0 & "101100000"; --  Lê KEY0
+tmp(92)	 := CEQ & R0 & "000000001"; --  Verifica se KEY0 == 1
+tmp(93)	 := JEQ & R0 & "001011111"; --  Desvia para configuração da dezena de hora
+tmp(94)	 := JMP & R0 & "001011011";
+tmp(95)	 := LDI & R0 & "000000000"; --  R0 = 0
+tmp(96)	 := STA & R0 & "111111111"; --  Limpa leitura de KEY0
+tmp(97)	 := LDA & R0 & "101000000"; --  R0 = SW0 ~ SW7
+tmp(98)	 := CLT & R0 & "000001010"; --  Verifica se SW < 10
+tmp(99)	 := JLT & R0 & "001100101";
+tmp(100)	 := JMP & R0 & "001101000";
+tmp(101)	 := STA & R0 & "000011001"; --  Grava leitura das chaves no valor de dezena de hora
+tmp(102)	 := STA & R0 & "100100101"; --  Grava leitura das chaves no HEX4
+tmp(103)	 := JMP & R0 & "001101011";
+tmp(104)	 := LDI & R0 & "000000000";
+tmp(105)	 := STA & R0 & "000011001"; --  Grava 0 nas unidades de hora
+tmp(106)	 := STA & R0 & "100100101"; --  Grava 0 no HEX4
+tmp(107)	 := LDI & R0 & "000001111"; --  R0 = 15
+tmp(108)	 := STA & R0 & "100000000"; --  Acende LEDR3 para indicar conf. de dezena de hora
+tmp(109)	 := LDA & R0 & "101100000"; --  Lê KEY0
+tmp(110)	 := CEQ & R0 & "000000001"; --  Verifica se KEY0 == 1
+tmp(111)	 := JEQ & R0 & "001110001"; --  Desvia para configuração da dezena de hora
+tmp(112)	 := JMP & R0 & "001101101";
+tmp(113)	 := LDI & R0 & "000000000"; --  R0 = 0
+tmp(114)	 := STA & R0 & "111111111"; --  Limpa leitura de KEY0
+tmp(115)	 := STA & R0 & "100000010"; --  Apaga LEDR9
+tmp(116)	 := STA & R0 & "100000000"; --  Apaga LEDR0~7
+tmp(117)	 := JMP & R0 & "001110110";
+tmp(118)	 := LDA & R0 & "101100101"; --  Lê base de tempo do relógio
+tmp(119)	 := CEQ & R0 & "000000001"; --  Se for 1, desvia para sub-rotina de incremento de segundo
+tmp(120)	 := JEQ & R0 & "001111101";
+tmp(121)	 := LDA & R0 & "101100001"; --  Lê KEY1
+tmp(122)	 := CEQ & R0 & "000000001"; --  Se for 1, desvia para sub-rotina de configuração
+tmp(123)	 := JEQ & R0 & "001111111";
+tmp(124)	 := JMP & R0 & "001110110";
+tmp(125)	 := JSR & R0 & "010000001"; --  Desvia para sub-rotina de incremento de segundo
+tmp(126)	 := JMP & R0 & "001110110"; --  Retorna para o início do loop
+tmp(127)	 := JSR & R0 & "000100001";
+tmp(128)	 := JMP & R0 & "001110110";
+tmp(129)	 := LDI & R0 & "000000000"; --  R0 = 0
+tmp(130)	 := STA & R0 & "111111100"; --  Limpa leitura da base de tempo de 1s
+tmp(131)	 := LDI & R0 & "000000001"; --  R0 = 1
+tmp(132)	 := SOMA & R0 & "000010100"; --  Soma 1 no contador de unidades de segundos e armazena em R0
+tmp(133)	 := CLT & R0 & "000001010"; --  Compara R0 < 10
+tmp(134)	 := JLT & R0 & "010001000";
+tmp(135)	 := JMP & R0 & "010001011";
+tmp(136)	 := STA & R0 & "000010100"; --  Atualiza contador de unidade de segundo
+tmp(137)	 := STA & R0 & "100100000"; --  Atualiza unidade de segundo em HEX0
+tmp(138)	 := RET & R0 & "000000000";
+tmp(139)	 := LDI & R0 & "000000000";
+tmp(140)	 := STA & R0 & "000010100"; --  Zera contador de unidade de segundo
+tmp(141)	 := STA & R0 & "100100000"; --  Zera HEX0
+tmp(142)	 := LDA & R0 & "000010101"; --  Carrega em R0 valor de dezena de segundo
+tmp(143)	 := SOMA & R0 & "000000001"; --  R0 += 1 (incrementa dezena de segundo)
+tmp(144)	 := CLT & R0 & "000000110"; --  Compara R0 < 6
+tmp(145)	 := JLT & R0 & "010010011"; --  Se R0 < 6, desvia para incremento de dezena de segundo
+tmp(146)	 := JMP & R0 & "010010110"; --  Se R0 >= 6, desvia para atualização
+tmp(147)	 := STA & R0 & "000010101"; --  Atualiza contador de dezena de segundo
+tmp(148)	 := STA & R0 & "100100001"; --  Atualiza HEX1
+tmp(149)	 := RET & R0 & "000000000";
+tmp(150)	 := LDI & R0 & "000000000";
+tmp(151)	 := STA & R0 & "000010101"; --  Zera contador de dezena de segundo
+tmp(152)	 := STA & R0 & "100100001"; --  Zera HEX1
+tmp(153)	 := LDA & R0 & "000010110"; --  Carrega em R0 valor de unidade de minuto
+tmp(154)	 := SOMA & R0 & "000000001"; --  R0 += 1 (incrementa unidade de minuto)
+tmp(155)	 := CLT & R0 & "000001010"; --  Compara R0 < 10
+tmp(156)	 := JLT & R0 & "010011110"; --  Se R0 < 10, desvia para incremento de unidade de minuto
+tmp(157)	 := JMP & R0 & "010100001"; --  Se R0 >= 10, desvia para atualização
+tmp(158)	 := STA & R0 & "000010110"; --  Atualiza contador de unidade de minuto
+tmp(159)	 := STA & R0 & "100100010"; --  Atualiza HEX2
+tmp(160)	 := RET & R0 & "000000000";
+tmp(161)	 := LDI & R0 & "000000000";
+tmp(162)	 := STA & R0 & "000010110"; --  Zera contador de unidade de minuto
+tmp(163)	 := STA & R0 & "100100010"; --  Zera HEX2
+tmp(164)	 := LDA & R0 & "000010111"; --  Carrega em R0 valor de dezena de minuto
+tmp(165)	 := SOMA & R0 & "000000001"; --  R0 += 1 (incrementa dezena de minuto)
+tmp(166)	 := CLT & R0 & "000000110"; --  Compara R0 < 6
+tmp(167)	 := JLT & R0 & "010101001"; --  Se R0 < 6, desvia para incremento de dezena de minuto
+tmp(168)	 := JMP & R0 & "010101100"; --  Se R0 >= 6, desvia para atualização
+tmp(169)	 := STA & R0 & "000010111"; --  Atualiza contador de dezena de minuto
+tmp(170)	 := STA & R0 & "100100011"; --  Atualiza HEX3
+tmp(171)	 := RET & R0 & "000000000";
+tmp(172)	 := LDI & R0 & "000000000";
+tmp(173)	 := STA & R0 & "000010111"; --  Zera contador de dezena de minuto
+tmp(174)	 := STA & R0 & "100100011"; --  Zera HEX3
+tmp(175)	 := LDA & R0 & "000011000"; --  Carrega em R0 valor de unidade de hora
+tmp(176)	 := SOMA & R0 & "000000001"; --  R0 += 1 (incrementa unidade de hora)
+tmp(177)	 := CLT & R0 & "000001010"; --  Compara R0 < 10
+tmp(178)	 := JLT & R0 & "010110100"; --  Se R0 < 10, desvia para incremento de unidade de hora
+tmp(179)	 := JMP & R0 & "011000100"; --  Se R0 >= 10, desvia para atualização
+tmp(180)	 := STA & R0 & "000011000"; --  Atualiza contador de unidade de hora
+tmp(181)	 := STA & R0 & "100100100"; --  Atualiza HEX4
+tmp(182)	 := LDA & R0 & "000011000"; --  Carrega em R0 contador de unidade de hora
+tmp(183)	 := CEQ & R0 & "000000100"; --  Compara R0 == 4
+tmp(184)	 := JEQ & R0 & "010111010";
+tmp(185)	 := RET & R0 & "000000000";
+tmp(186)	 := LDA & R1 & "000011001"; --  Carrega R1 com dezena de hora
+tmp(187)	 := CEQ & R1 & "000000010"; --  Compara R1 == 2
+tmp(188)	 := JEQ & R0 & "010111110";
+tmp(189)	 := RET & R0 & "000000000";
+tmp(190)	 := LDI & R0 & "000000000"; --  R0 = 0
+tmp(191)	 := STA & R0 & "000011000"; --  Zera contador de unidade de hora
+tmp(192)	 := STA & R0 & "000011001"; --  Zera contador de dezena de hora
+tmp(193)	 := STA & R0 & "100100100"; --  Zera HEX4
+tmp(194)	 := STA & R0 & "100100101"; --  Zera HEX5
+tmp(195)	 := RET & R0 & "000000000";
+tmp(196)	 := LDI & R0 & "000000000";
+tmp(197)	 := STA & R0 & "000011000"; --  Zera contador de unidade de hora
+tmp(198)	 := STA & R0 & "100100100"; --  Zera HEX4
+tmp(199)	 := LDA & R0 & "000011001"; --  Carrega em R0 valor de dezena de hora
+tmp(200)	 := SOMA & R0 & "000000001"; --  R0 += 1 (incrementa dezena de hora)
+tmp(201)	 := CLT & R0 & "000000011"; --  Compara R0 < 3
+tmp(202)	 := JLT & R0 & "011001100"; --  Se R0 < 3, desvia para incremento de dezena de hora
+tmp(203)	 := JMP & R0 & "011001111"; --  Se R0 >= 3, desvia para atualização
+tmp(204)	 := STA & R0 & "000011001"; --  Atualiza contador de dezena de hora
+tmp(205)	 := STA & R0 & "100100101"; --  Atualiza HEX5
+tmp(206)	 := RET & R0 & "000000000";
+tmp(207)	 := LDI & R0 & "000000000";
+tmp(208)	 := STA & R0 & "000011001"; --  Zera contador de dezena de hora
+tmp(209)	 := STA & R0 & "100100101"; --  Zera HEX5
+tmp(210)	 := RET & R0 & "000000000";

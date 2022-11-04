@@ -12,10 +12,12 @@ MNEMONICS = {
     "CEQ" : "1000",
     "JSR" : "1001",
     "RET" : "1010",
-    "ANDOP" : "1011",
+    "ANDI" : "1011",
+    "CLT": "1100",
+    "JLT": "1101",
 }
 
-JMPS = ["JMP", "JSR", "JEQ"]
+JMPS = ["JMP", "JSR", "JEQ", "JLT"]
 
 REGS = {
     "R0": "00",

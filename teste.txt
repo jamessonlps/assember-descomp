@@ -1,7 +1,19 @@
-LDI R0 $1
-STA R0 @1
+:INICIO_DE_TUDO
 LDI R0 $0
 STA R0 @0
+LDI R0 $1
+STA R0 @1
+LDI R0 $2
+STA R0 @2
+LDI R0 $3
+STA R0 @3
+LDI R0 $4
+STA R0 @4
+LDI R0 $6
+STA R0 @6
+LDI R0 $10
+STA R0 @10
+LDI R0 $0
 STA R0 @288
 STA R0 @289
 STA R0 @290
@@ -9,31 +21,233 @@ STA R0 @291
 STA R0 @288
 STA R0 @511
 STA R0 @510
-LDI R1 $0
-LDI R2 $0
-:LOOP_PRINCIPAL
-LDA R0 @352
-CEQ R0 $1
-JEQ @DESVIO_UNIDADE
-LDA R0 @353
-CEQ R0 $1
-JEQ @DESVIO_DEZENA
-JMP @LOOP_PRINCIPAL
-:DESVIO_UNIDADE
-JSR @ROTINA_INCREMENTO_UNIDADE
-JMP @LOOP_PRINCIPAL
-:DESVIO_DEZENA
-JSR @ROTINA_INCREMENTO_DEZENA
-JMP @LOOP_PRINCIPAL
-:ROTINA_INCREMENTO_UNIDADE
+STA R0 @509
+STA R0 @508
+STA R0 @256
+STA R0 @257
+STA R0 @258
+STA R0 @20 # Unidade de segundo
+STA R0 @21 # Dezena de segundo
+STA R0 @22 # Unidade de minuto
+STA R0 @23 # Dezena de minuto
+STA R0 @24 # Unidade de hora
+STA R0 @25 # Dezena de hora
+:CONFIGURACAO_RELOGIO
+LDI R0 $1   # R0 = 1 (Início da sub-rotina de setup do relógio)
+STA R0 @258 # Acende LEDR9
+LDI R0 $0   # R0 = 0
+STA R0 @510 # Limpa leitura de KEY1
+:AGUARDA_KEY0_PARA_CONFIGURAR_UNIDADE_MINUTO
+LDA R0 @352                   # Lê KEY0
+CEQ R0 @1                     # Verifica se KEY0 == 1
+JEQ @CONFIGURA_UNIDADE_MINUTO # Desvia para configuração da unidade de minuto
+JMP @AGUARDA_KEY0_PARA_CONFIGURAR_UNIDADE_MINUTO
+:CONFIGURA_UNIDADE_MINUTO
+LDI R0 $0   # R0 = 0
+STA R0 @511 # Limpa leitura de KEY0
+LDA R0 @320 # R0 = SW0 ~ SW7
+CLT R0 @10  # Verifica se SW < 10
+JLT @ATRIBUI_SW_A_UNIDADE_MINUTO
+JMP @ATRIBUI_0_A_UNIDADE_MINUTO
+:ATRIBUI_SW_A_UNIDADE_MINUTO
+STA R0 @22  # Grava leitura das chaves no valor de unidade de minuto
+STA R0 @290 # Grava leitura das chaves no HEX2
+JMP @UNIDADE_MINUTO_OK
+:ATRIBUI_0_A_UNIDADE_MINUTO
 LDI R0 $0
-STA R0 @511
-SOMA R1 @1
-STA R1 @288
+STA R0 @22  # Grava 0 nas unidades de minuto
+STA R0 @290 # Grava 0 no HEX2
+:UNIDADE_MINUTO_OK
+LDI R0 $1   # R0 = 1
+STA R0 @256 # Acende LEDR0 para indicar conf. de unidade de minuto
+:AGUARDA_KEY0_PARA_CONFIGURAR_DEZENA_MINUTO
+LDA R0 @352                   # Lê KEY0
+CEQ R0 @1                     # Verifica se KEY0 == 1
+JEQ @CONFIGURA_DEZENA_MINUTO # Desvia para configuração da unidade de minuto
+JMP @AGUARDA_KEY0_PARA_CONFIGURAR_DEZENA_MINUTO
+:CONFIGURA_DEZENA_MINUTO
+LDI R0 $0   # R0 = 0
+STA R0 @511 # Limpa leitura de KEY0
+LDA R0 @320 # R0 = SW0 ~ SW7
+CLT R0 @10  # Verifica se SW < 10
+JLT @ATRIBUI_SW_A_DEZENA_MINUTO
+JMP @ATRIBUI_0_A_DEZENA_MINUTO
+:ATRIBUI_SW_A_DEZENA_MINUTO
+STA R0 @23  # Grava leitura das chaves no valor de dezena de minuto
+STA R0 @291 # Grava leitura das chaves no HEX3
+JMP @DEZENA_MINUTO_OK
+:ATRIBUI_0_A_DEZENA_MINUTO
+LDI R0 $0
+STA R0 @23  # Grava 0 nas dezenas de minuto
+STA R0 @291 # Grava 0 no HEX3
+:DEZENA_MINUTO_OK
+LDI R0 $3   # R0 = 3
+STA R0 @256 # Acende LEDR1 para indicar conf. de dezena de minuto
+:AGUARDA_KEY0_PARA_CONFIGURAR_UNIDADE_HORA
+LDA R0 @352                   # Lê KEY0
+CEQ R0 @1                     # Verifica se KEY0 == 1
+JEQ @CONFIGURA_UNIDADE_HORA   # Desvia para configuração da unidade de hora
+JMP @AGUARDA_KEY0_PARA_CONFIGURAR_UNIDADE_HORA
+:CONFIGURA_UNIDADE_HORA
+LDI R0 $0   # R0 = 0
+STA R0 @511 # Limpa leitura de KEY0
+LDA R0 @320 # R0 = SW0 ~ SW7
+CLT R0 @10  # Verifica se SW < 10
+JLT @ATRIBUI_SW_A_UNIDADE_HORA
+JMP @ATRIBUI_0_A_UNIDADE_HORA
+:ATRIBUI_SW_A_UNIDADE_HORA
+STA R0 @24  # Grava leitura das chaves no valor de unidade de hora
+STA R0 @292 # Grava leitura das chaves no HEX4
+JMP @UNIDADE_HORA_OK
+:ATRIBUI_0_A_UNIDADE_HORA
+LDI R0 $0
+STA R0 @24  # Grava 0 nas unidades de hora
+STA R0 @292 # Grava 0 no HEX4
+:UNIDADE_HORA_OK
+LDI R0 $7   # R0 = 7
+STA R0 @256 # Acende LEDR2 para indicar conf. de unidade de hora
+:AGUARDA_KEY0_PARA_CONFIGURAR_DEZENA_HORA
+LDA R0 @352                   # Lê KEY0
+CEQ R0 @1                     # Verifica se KEY0 == 1
+JEQ @CONFIGURA_DEZENA_HORA    # Desvia para configuração da dezena de hora
+JMP @AGUARDA_KEY0_PARA_CONFIGURAR_DEZENA_HORA
+:CONFIGURA_DEZENA_HORA
+LDI R0 $0   # R0 = 0
+STA R0 @511 # Limpa leitura de KEY0
+LDA R0 @320 # R0 = SW0 ~ SW7
+CLT R0 @10  # Verifica se SW < 10
+JLT @ATRIBUI_SW_A_DEZENA_HORA
+JMP @ATRIBUI_0_A_DEZENA_HORA
+:ATRIBUI_SW_A_DEZENA_HORA
+STA R0 @25  # Grava leitura das chaves no valor de dezena de hora
+STA R0 @293 # Grava leitura das chaves no HEX4
+JMP @DEZENA_HORA_OK
+:ATRIBUI_0_A_DEZENA_HORA
+LDI R0 $0
+STA R0 @25  # Grava 0 nas unidades de hora
+STA R0 @293 # Grava 0 no HEX4
+:DEZENA_HORA_OK
+LDI R0 $15  # R0 = 15
+STA R0 @256 # Acende LEDR3 para indicar conf. de dezena de hora
+:AGUARDA_KEY0_PARA_FINALIZAR_CONFIGURACAO
+LDA R0 @352                   # Lê KEY0
+CEQ R0 @1                     # Verifica se KEY0 == 1
+JEQ @FINALIZA_CONFIGURACAO    # Desvia para configuração da dezena de hora
+JMP @AGUARDA_KEY0_PARA_FINALIZAR_CONFIGURACAO
+:FINALIZA_CONFIGURACAO
+LDI R0 $0   # R0 = 0
+STA R0 @511 # Limpa leitura de KEY0
+STA R0 @258 # Apaga LEDR9
+STA R0 @256 # Apaga LEDR0~7
+JMP @ROTINA_PRINCIPAL
+:ROTINA_PRINCIPAL
+LDA R0 @357 # Lê base de tempo do relógio
+CEQ R0 @1   # Se for 1, desvia para sub-rotina de incremento de segundo
+JEQ @DESVIO_SUBROTINA_INCREMENTO
+LDA R0 @353 # Lê KEY1
+CEQ R0 @1   # Se for 1, desvia para sub-rotina de configuração
+JEQ @DESVIO_ROTINA_CONFIG
+JMP @ROTINA_PRINCIPAL
+:DESVIO_SUBROTINA_INCREMENTO
+JSR @SUBROTINA_INCREMENTO_SEGUNDO # Desvia para sub-rotina de incremento de segundo
+JMP @ROTINA_PRINCIPAL             # Retorna para o início do loop
+:DESVIO_ROTINA_CONFIG
+JSR @CONFIGURACAO_RELOGIO
+JMP @ROTINA_PRINCIPAL
+:SUBROTINA_INCREMENTO_SEGUNDO
+LDI R0 $0   # R0 = 0
+STA R0 @508 # Limpa leitura da base de tempo de 1s
+LDI R0 $1   # R0 = 1
+SOMA R0 @20 # Soma 1 no contador de unidades de segundos e armazena em R0
+CLT R0 @10  # Compara R0 < 10
+JLT @INCREMENTA_SEGUNDO
+JMP @ATUALIZA_UNIDADE_SEGUNDO
+:INCREMENTA_SEGUNDO
+STA R0 @20  # Atualiza contador de unidade de segundo
+STA R0 @288 # Atualiza unidade de segundo em HEX0
 RET
-:ROTINA_INCREMENTO_DEZENA
+:ATUALIZA_UNIDADE_SEGUNDO
 LDI R0 $0
-STA R0 @510
-SOMA R2 @1
-STA R2 @289
+STA R0 @20  # Zera contador de unidade de segundo
+STA R0 @288 # Zera HEX0
+LDA R0 @21 # Carrega em R0 valor de dezena de segundo
+SOMA R0 @1 # R0 += 1 (incrementa dezena de segundo)
+CLT R0 @6  # Compara R0 < 6
+JLT @INCREMENTA_DEZENA_SEGUNDO # Se R0 < 6, desvia para incremento de dezena de segundo
+JMP @ATUALIZA_DEZENA_SEGUNDO   # Se R0 >= 6, desvia para atualização
+:INCREMENTA_DEZENA_SEGUNDO
+STA R0 @21  # Atualiza contador de dezena de segundo
+STA R0 @289 # Atualiza HEX1
+RET
+:ATUALIZA_DEZENA_SEGUNDO
+LDI R0 $0
+STA R0 @21  # Zera contador de dezena de segundo
+STA R0 @289 # Zera HEX1
+LDA R0 @22 # Carrega em R0 valor de unidade de minuto
+SOMA R0 @1 # R0 += 1 (incrementa unidade de minuto)
+CLT R0 @10 # Compara R0 < 10
+JLT @INCREMENTA_UNIDADE_MINUTO  # Se R0 < 10, desvia para incremento de unidade de minuto
+JMP @ATUALIZA_UNIDADE_MINUTO    # Se R0 >= 10, desvia para atualização
+:INCREMENTA_UNIDADE_MINUTO
+STA R0 @22  # Atualiza contador de unidade de minuto
+STA R0 @290 # Atualiza HEX2
+RET
+:ATUALIZA_UNIDADE_MINUTO
+LDI R0 $0
+STA R0 @22  # Zera contador de unidade de minuto
+STA R0 @290 # Zera HEX2
+LDA R0 @23 # Carrega em R0 valor de dezena de minuto
+SOMA R0 @1 # R0 += 1 (incrementa dezena de minuto)
+CLT R0 @6  # Compara R0 < 6
+JLT @INCREMENTA_DEZENA_MINUTO  # Se R0 < 6, desvia para incremento de dezena de minuto
+JMP @ATUALIZA_DEZENA_MINUTO    # Se R0 >= 6, desvia para atualização
+:INCREMENTA_DEZENA_MINUTO
+STA R0 @23  # Atualiza contador de dezena de minuto
+STA R0 @291 # Atualiza HEX3
+RET
+:ATUALIZA_DEZENA_MINUTO
+LDI R0 $0
+STA R0 @23  # Zera contador de dezena de minuto
+STA R0 @291 # Zera HEX3
+LDA R0 @24 # Carrega em R0 valor de unidade de hora
+SOMA R0 @1 # R0 += 1 (incrementa unidade de hora)
+CLT R0 @10 # Compara R0 < 10
+JLT @INCREMENTA_UNIDADE_HORA  # Se R0 < 10, desvia para incremento de unidade de hora
+JMP @ATUALIZA_UNIDADE_HORA    # Se R0 >= 10, desvia para atualização
+:INCREMENTA_UNIDADE_HORA
+STA R0 @24  # Atualiza contador de unidade de hora
+STA R0 @292 # Atualiza HEX4
+LDA R0 @24  # Carrega em R0 contador de unidade de hora
+CEQ R0 @4   # Compara R0 == 4
+JEQ @CHECA_DEZENA_HORA
+RET
+:CHECA_DEZENA_HORA
+LDA R1 @25 # Carrega R1 com dezena de hora
+CEQ R1 @2  # Compara R1 == 2
+JEQ @RESETA_HORA
+RET
+:RESETA_HORA
+LDI R0 $0   # R0 = 0
+STA R0 @24  # Zera contador de unidade de hora
+STA R0 @25  # Zera contador de dezena de hora
+STA R0 @292 # Zera HEX4
+STA R0 @293 # Zera HEX5
+RET
+:ATUALIZA_UNIDADE_HORA
+LDI R0 $0
+STA R0 @24  # Zera contador de unidade de hora
+STA R0 @292 # Zera HEX4
+LDA R0 @25 # Carrega em R0 valor de dezena de hora
+SOMA R0 @1 # R0 += 1 (incrementa dezena de hora)
+CLT R0 @3  # Compara R0 < 3
+JLT @INCREMENTA_DEZENA_HORA  # Se R0 < 3, desvia para incremento de dezena de hora
+JMP @ATUALIZA_DEZENA_HORA    # Se R0 >= 3, desvia para atualização
+:INCREMENTA_DEZENA_HORA
+STA R0 @25  # Atualiza contador de dezena de hora
+STA R0 @293 # Atualiza HEX5
+RET
+:ATUALIZA_DEZENA_HORA
+LDI R0 $0
+STA R0 @25  # Zera contador de dezena de hora
+STA R0 @293 # Zera HEX5
 RET
