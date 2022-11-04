@@ -1,42 +1,50 @@
 :INICIO_DE_TUDO
 LDI R0 $0
-STA R0 @0
+STA R0 @0 # MEM[0] = 0
 LDI R0 $1
-STA R0 @1
+STA R0 @1 # MEM[1] = 1
 LDI R0 $2
-STA R0 @2
+STA R0 @2 # MEM[2] = 2
 LDI R0 $3
-STA R0 @3
+STA R0 @3 # MEM[3] = 3
 LDI R0 $4
-STA R0 @4
+STA R0 @4 # MEM[4] = 4
 LDI R0 $6
-STA R0 @6
+STA R0 @6 # MEM[6] = 6
 LDI R0 $10
-STA R0 @10
+STA R0 @10 # MEM[10] = 10
 LDI R0 $0
-STA R0 @288
-STA R0 @289
-STA R0 @290
-STA R0 @291
-STA R0 @288
-STA R0 @511
-STA R0 @510
-STA R0 @509
-STA R0 @508
-STA R0 @256
-STA R0 @257
-STA R0 @258
-STA R0 @20 # Unidade de segundo
-STA R0 @21 # Dezena de segundo
-STA R0 @22 # Unidade de minuto
-STA R0 @23 # Dezena de minuto
-STA R0 @24 # Unidade de hora
-STA R0 @25 # Dezena de hora
+STA R0 @288 # Zera HEX0
+STA R0 @289 # Zera HEX1
+STA R0 @290 # Zera HEX2
+STA R0 @291 # Zera HEX3
+STA R0 @292 # Zera HEX4
+STA R0 @293 # Zera HEX5
+STA R0 @511 # Limpa KEY0
+STA R0 @510 # Limpa KEY1
+STA R0 @509 # Limpa KEY_RESET
+STA R0 @508 # Limpa Leitura da base de tempo
+STA R0 @256 # Apaga LEDR0~7
+STA R0 @257 # Apaga LEDR8
+STA R0 @258 # Apaga LEDR9
+STA R0 @20 # Zera Unidade de segundo
+STA R0 @21 # Zera Dezena de segundo
+STA R0 @22 # Zera Unidade de minuto
+STA R0 @23 # Zera Dezena de minuto
+STA R0 @24 # Zera Unidade de hora
+STA R0 @25 # Zera Dezena de hora
+STA R0 @28 # Zera flag de alarme ligado
+STA R0 @29 # Zera flag de alarme acionado
+STA R0 @30 # Zera unidade de minuto de alarme
+STA R0 @31 # Zera dezena de minuto de alarme
+STA R0 @32 # Zera unidade de hora de alarme
+STA R0 @33 # Zera dezena de hora de alarme
+JMP @ROTINA_PRINCIPAL
 :CONFIGURACAO_RELOGIO
 LDI R0 $1   # R0 = 1 (Início da sub-rotina de setup do relógio)
 STA R0 @258 # Acende LEDR9
 LDI R0 $0   # R0 = 0
-STA R0 @510 # Limpa leitura de KEY1
+STA R0 @511 # Limpa leitura de KEY0
 :AGUARDA_KEY0_PARA_CONFIGURAR_UNIDADE_MINUTO
 LDA R0 @352                   # Lê KEY0
 CEQ R0 @1                     # Verifica se KEY0 == 1
@@ -150,20 +158,32 @@ LDI R0 $0   # R0 = 0
 STA R0 @511 # Limpa leitura de KEY0
 STA R0 @258 # Apaga LEDR9
 STA R0 @256 # Apaga LEDR0~7
-JMP @ROTINA_PRINCIPAL
+RET
 :ROTINA_PRINCIPAL
 LDA R0 @357 # Lê base de tempo do relógio
 CEQ R0 @1   # Se for 1, desvia para sub-rotina de incremento de segundo
 JEQ @DESVIO_SUBROTINA_INCREMENTO
-LDA R0 @353 # Lê KEY1
-CEQ R0 @1   # Se for 1, desvia para sub-rotina de configuração
+LDA R0 @352 # Lê KEY0
+CEQ R0 @1   # Se for 1, desvia para sub-rotina de configuração de horário
 JEQ @DESVIO_ROTINA_CONFIG
+LDA R0 @356 # Lê KEY_RESET
+CEQ R0 @1   # Se for 1, desvia para sub-rotina de configuração de alarme
+JEQ @DESVIO_ROTINA_ALARME
+LDA R0 @29 # Lê flag de alarme ativado
+CEQ R0 @1  # Se for 1, desvia para sub-rotina de ativação do alarme
+JEQ @DESVIO_ATIVACAO_ALARME
 JMP @ROTINA_PRINCIPAL
 :DESVIO_SUBROTINA_INCREMENTO
 JSR @SUBROTINA_INCREMENTO_SEGUNDO # Desvia para sub-rotina de incremento de segundo
 JMP @ROTINA_PRINCIPAL             # Retorna para o início do loop
 :DESVIO_ROTINA_CONFIG
 JSR @CONFIGURACAO_RELOGIO
+JMP @ROTINA_PRINCIPAL
+:DESVIO_ROTINA_ALARME
+JSR @CONFIGURACAO_ALARME
+JMP @ROTINA_PRINCIPAL
+:DESVIO_ATIVACAO_ALARME
+JSR @SUBROTINA_ATIVACAO_ALARME
 JMP @ROTINA_PRINCIPAL
 :SUBROTINA_INCREMENTO_SEGUNDO
 LDI R0 $0   # R0 = 0
@@ -202,7 +222,7 @@ JMP @ATUALIZA_UNIDADE_MINUTO    # Se R0 >= 10, desvia para atualização
 :INCREMENTA_UNIDADE_MINUTO
 STA R0 @22  # Atualiza contador de unidade de minuto
 STA R0 @290 # Atualiza HEX2
-RET
+JMP @ENCERRA_ROTINA_INCREMENTO
 :ATUALIZA_UNIDADE_MINUTO
 LDI R0 $0
 STA R0 @22  # Zera contador de unidade de minuto
@@ -215,7 +235,7 @@ JMP @ATUALIZA_DEZENA_MINUTO    # Se R0 >= 6, desvia para atualização
 :INCREMENTA_DEZENA_MINUTO
 STA R0 @23  # Atualiza contador de dezena de minuto
 STA R0 @291 # Atualiza HEX3
-RET
+JMP @ENCERRA_ROTINA_INCREMENTO
 :ATUALIZA_DEZENA_MINUTO
 LDI R0 $0
 STA R0 @23  # Zera contador de dezena de minuto
@@ -231,19 +251,19 @@ STA R0 @292 # Atualiza HEX4
 LDA R0 @24  # Carrega em R0 contador de unidade de hora
 CEQ R0 @4   # Compara R0 == 4
 JEQ @CHECA_DEZENA_HORA
-RET
+JMP @ENCERRA_ROTINA_INCREMENTO
 :CHECA_DEZENA_HORA
 LDA R1 @25 # Carrega R1 com dezena de hora
 CEQ R1 @2  # Compara R1 == 2
 JEQ @RESETA_HORA
-RET
+JMP @ENCERRA_ROTINA_INCREMENTO
 :RESETA_HORA
 LDI R0 $0   # R0 = 0
 STA R0 @24  # Zera contador de unidade de hora
 STA R0 @25  # Zera contador de dezena de hora
 STA R0 @292 # Zera HEX4
 STA R0 @293 # Zera HEX5
-RET
+JMP @ENCERRA_ROTINA_INCREMENTO
 :ATUALIZA_UNIDADE_HORA
 LDI R0 $0
 STA R0 @24  # Zera contador de unidade de hora
@@ -256,9 +276,176 @@ JMP @ATUALIZA_DEZENA_HORA    # Se R0 >= 3, desvia para atualização
 :INCREMENTA_DEZENA_HORA
 STA R0 @25  # Atualiza contador de dezena de hora
 STA R0 @293 # Atualiza HEX5
-RET
+JMP @ENCERRA_ROTINA_INCREMENTO
 :ATUALIZA_DEZENA_HORA
 LDI R0 $0
 STA R0 @25  # Zera contador de dezena de hora
 STA R0 @293 # Zera HEX5
+JMP @ENCERRA_ROTINA_INCREMENTO
+:ENCERRA_ROTINA_INCREMENTO
+LDA R0 @28 # Carrega R0 com flag de alarme ligado
+CEQ R0 @1  # Verifica se flag vale 1
+JEQ @CONFERE_UNIDADE_MINUTO # Se ativado, inicia conferência do alarme
+JMP @FIM_INCREMENTO # Se não, pula para o fim dessa sub-rotina
+:CONFERE_UNIDADE_MINUTO
+LDA R0 @22 # Carrega R0 com unidade de minuto
+CEQ R0 @30 # Checa se bate com unidade de minuto de alarme
+JEQ @CONFERE_DEZENA_MINUTO
+JMP @FIM_INCREMENTO
+:CONFERE_DEZENA_MINUTO
+LDA R0 @23 # Carrega R0 com dezena de minuto
+CEQ R0 @31 # Checa se bate com dezena de minuto de alarme
+JEQ @CONFERE_UNIDADE_HORA
+JMP @FIM_INCREMENTO
+:CONFERE_UNIDADE_HORA
+LDA R0 @24 # Carrega R0 com unidade de hora
+CEQ R0 @32 # Checa se bate com unidade de hora de alarme
+JEQ @CONFERE_DEZENA_HORA
+JMP @FIM_INCREMENTO
+:CONFERE_DEZENA_HORA
+LDA R0 @25 # Carrega R0 com dezena de hora
+CEQ R0 @33 # Checa se bate com dezena de hora de alarme
+JEQ @ATIVA_ALARME # Por fim, se bater, flag de alarme acionado = 1
+JMP @FIM_INCREMENTO
+:ATIVA_ALARME
+LDI R0 $1  # R0 = 1
+STA R0 @29 # Flag de alarme acionado = 1
+:FIM_INCREMENTO
+RET
+:CONFIGURACAO_ALARME
+LDI R0 $1   # R0 = 1 (Início da sub-rotina de setup do alarme)
+STA R0 @257 # Acende LEDR8
+LDI R0 $0   # R0 = 0
+STA R0 @509 # Limpa leitura de KEY_RESET
+STA R0 @256 # Apaga LEDR0~7
+:AGUARDA_KEY_RESET_PARA_CONFIGURAR_UNIDADE_MINUTO
+LDA R0 @356                   # Lê KEY_RESET
+CEQ R0 @1                     # Verifica se KEY_RESET == 1
+JEQ @CONFIGURA_UNIDADE_MINUTO_ALARME # Desvia para configuração da unidade de minuto
+JMP @AGUARDA_KEY_RESET_PARA_CONFIGURAR_UNIDADE_MINUTO
+:CONFIGURA_UNIDADE_MINUTO_ALARME
+LDI R0 $0   # R0 = 0
+STA R0 @509 # Limpa leitura de KEY_RESET
+LDA R0 @320 # R0 = SW0 ~ SW7
+CLT R0 @10  # Verifica se SW < 10
+JLT @ATRIBUI_SW_A_UNIDADE_MINUTO_ALARME
+JMP @ATRIBUI_0_A_UNIDADE_MINUTO_ALARME
+:ATRIBUI_SW_A_UNIDADE_MINUTO_ALARME
+STA R0 @30  # Grava leitura das chaves no valor do alarme de unidade de minuto
+STA R0 @290 # Grava leitura das chaves no HEX2
+JMP @UNIDADE_MINUTO_ALARME_OK
+:ATRIBUI_0_A_UNIDADE_MINUTO_ALARME
+LDI R0 $0
+STA R0 @30  # Grava 0 nas unidades de minuto
+STA R0 @290 # Grava 0 no HEX2
+:UNIDADE_MINUTO_ALARME_OK
+LDI R0 $1   # R0 = 1
+STA R0 @256 # Acende LEDR0 para indicar conf. de unidade de minuto
+:AGUARDA_KEY_RESET_PARA_CONFIGURAR_DEZENA_MINUTO
+LDA R0 @356                   # Lê KEY_RESET
+CEQ R0 @1                     # Verifica se KEY_RESET == 1
+JEQ @CONFIGURA_DEZENA_MINUTO_ALARME # Desvia para configuração do alarme da dezena de minuto
+JMP @AGUARDA_KEY_RESET_PARA_CONFIGURAR_DEZENA_MINUTO
+:CONFIGURA_DEZENA_MINUTO_ALARME
+LDI R0 $0   # R0 = 0
+STA R0 @509 # Limpa leitura de KEY_RESET
+LDA R0 @320 # R0 = SW0 ~ SW7
+CLT R0 @6  # Verifica se SW < 6
+JLT @ATRIBUI_SW_A_DEZENA_MINUTO_ALARME
+JMP @ATRIBUI_0_A_DEZENA_MINUTO_ALARME
+:ATRIBUI_SW_A_DEZENA_MINUTO_ALARME
+STA R0 @31  # Grava leitura das chaves no valor de alarme de dezena de minuto
+STA R0 @291 # Grava leitura das chaves no HEX3
+JMP @DEZENA_MINUTO_ALARME_OK
+:ATRIBUI_0_A_DEZENA_MINUTO_ALARME
+LDI R0 $0
+STA R0 @31  # Grava 0 nas dezenas de minuto do alarme
+STA R0 @291 # Grava 0 no HEX3
+:DEZENA_MINUTO_ALARME_OK
+LDI R0 $3   # R0 = 3
+STA R0 @256 # Acende LEDR1 para indicar conf. de dezena de minuto
+:AGUARDA_KEY_RESET_PARA_CONFIGURAR_UNIDADE_HORA
+LDA R0 @356                   # Lê KEY_RESET
+CEQ R0 @1                     # Verifica se KEY_RESET == 1
+JEQ @CONFIGURA_UNIDADE_HORA_ALARME   # Desvia para configuração da unidade de hora
+JMP @AGUARDA_KEY_RESET_PARA_CONFIGURAR_UNIDADE_HORA
+:CONFIGURA_UNIDADE_HORA_ALARME
+LDI R0 $0   # R0 = 0
+STA R0 @509 # Limpa leitura de KEY_RESET
+LDA R0 @320 # R0 = SW0 ~ SW7
+CLT R0 @10  # Verifica se SW < 10
+JLT @ATRIBUI_SW_A_UNIDADE_HORA_ALARME
+JMP @ATRIBUI_0_A_UNIDADE_HORA_ALARME
+:ATRIBUI_SW_A_UNIDADE_HORA_ALARME
+STA R0 @32  # Grava leitura das chaves no valor de unidade de hora de alarme
+STA R0 @292 # Grava leitura das chaves no HEX4
+JMP @UNIDADE_HORA_ALARME_OK
+:ATRIBUI_0_A_UNIDADE_HORA_ALARME
+LDI R0 $0
+STA R0 @32  # Grava 0 nas unidades de hora de alarme
+STA R0 @292 # Grava 0 no HEX4
+:UNIDADE_HORA_ALARME_OK
+LDI R0 $7   # R0 = 7
+STA R0 @256 # Acende LEDR2 para indicar conf. de unidade de hora
+:AGUARDA_KEY_RESET_PARA_CONFIGURAR_DEZENA_HORA
+LDA R0 @356                   # Lê KEY_RESET
+CEQ R0 @1                     # Verifica se KEY_RESET == 1
+JEQ @CONFIGURA_DEZENA_HORA_HORA    # Desvia para configuração da dezena de hora de alarme
+JMP @AGUARDA_KEY_RESET_PARA_CONFIGURAR_DEZENA_HORA
+:CONFIGURA_DEZENA_HORA_HORA
+LDI R0 $0   # R0 = 0
+STA R0 @509 # Limpa leitura de KEY_RESET
+LDA R0 @320 # R0 = SW0 ~ SW7
+STA R0 @33  # Grava dezena de hora do alarme
+CLT R0 @3   # Verifica se SW < 3
+JLT @ATRIBUI_SW_A_DEZENA_HORA_ALARME
+JMP @ATRIBUI_0_A_DEZENA_HORA_ALARME
+:ATRIBUI_SW_A_DEZENA_HORA_ALARME
+LDA R1 @32 # Carrega em R1 unidade de hora de alarme
+CLT R1 @4  # Compara R1 < 4
+JLT @SELECAO_DE_HORA_VALIDA_ALARME
+LDA R1 @33 # Carrega em R1 dezena de hora de alarme
+CLT R1 @2  # Compara R1 < 2
+JLT @SELECAO_DE_HORA_VALIDA_ALARME
+LDI R1 $3  # R1 = 3
+STA R1 @33 # Atribui 3 à unidade de hora de alarme
+STA R1 @292 # Grava 3 no HEX4
+:SELECAO_DE_HORA_VALIDA_ALARME
+STA R0 @33  # Grava leitura das chaves no valor de dezena de hora de alarme
+STA R0 @293 # Grava leitura das chaves no HEX4
+JMP @DEZENA_HORA_ALARME_OK
+:ATRIBUI_0_A_DEZENA_HORA_ALARME
+LDI R0 $0
+STA R0 @33  # Grava 0 nas dezenas de hora de alarme
+STA R0 @293 # Grava 0 no HEX5
+:DEZENA_HORA_ALARME_OK
+LDI R0 $15  # R0 = 15
+STA R0 @256 # Acende LEDR3 para indicar conf. de dezena de hora
+:AGUARDA_KEY_RESET_PARA_FINALIZAR_CONFIGURACAO
+LDA R0 @356                   # Lê KEY_RESET
+CEQ R0 @1                     # Verifica se KEY_RESET == 1
+JEQ @FINALIZA_CONFIGURACAO_ALARME 
+JMP @AGUARDA_KEY_RESET_PARA_FINALIZAR_CONFIGURACAO
+:FINALIZA_CONFIGURACAO_ALARME
+LDI R0 $0   # R0 = 0
+STA R0 @509 # Limpa leitura de KEY_RESET
+STA R0 @257 # Apaga LEDR8
+STA R0 @256 # Apaga LEDR0~7
+LDA R0 @22  # Carrega em R0 unidades de minuto
+STA R0 @290 # Grava em HEX2 unidades de minuto
+LDA R0 @23  # Carrega em R0 dezenas de minuto
+STA R0 @291 # Grava em HEX3 dezenas de minuto
+LDA R0 @24  # Carrega em R0 unidades de hora
+STA R0 @292 # Grava em HEX4 unidades de hora
+LDA R0 @25  # Carrega em R0 dezenas de hora
+STA R0 @293 # Grava em HEX5 dezenas de hora
+LDI R0 $1  # Carrega 1 em R0
+STA R0 @28 # Flag alarme ligado = 1
+RET
+:SUBROTINA_ATIVACAO_ALARME
+LDI R0 $255 # Carrega R0 com 255
+STA R0 @256 # Liga todos os LEDS R0~7
+LDI R0 $0
+STA R0 @28 # Zera flag de alarme ligado (desliga)
+STA R0 @29 # Zera flag de alamre acionado
 RET
