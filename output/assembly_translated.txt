@@ -1,178 +1,383 @@
-tmp(0)	 := LDI & "000000000"; -- LDI $0   Carrega acumulador com o valor 0
-tmp(1)	 := STA & "111111110"; -- STA @510   Limpa KEY1
-tmp(2)	 := STA & "111111111"; -- STA @511   Limpa KEY0
-tmp(3)	 := STA & "111111101"; -- STA @509   Limpa KEY_RESET
-tmp(4)	 := STA & "100100000"; -- STA @288   Armazena o valor do acumulador em HEX0
-tmp(5)	 := STA & "100100001"; -- STA @289   Armazena o valor do acumulador em HEX1
-tmp(6)	 := STA & "100100010"; -- STA @290   Armazena o valor do acumulador em HEX2
-tmp(7)	 := STA & "100100011"; -- STA @291   Armazena o valor do acumulador em HEX3
-tmp(8)	 := STA & "100100100"; -- STA @292   Armazena o valor do acumulador em HEX4
-tmp(9)	 := STA & "100100101"; -- STA @293   Armazena o valor do acumulador em HEX5
-tmp(10)	 := LDI & "000000000"; -- LDI $0   Carrega acumulador com o valor 0
-tmp(11)	 := STA & "100000000"; -- STA @256   Aramzena o valor do bit0 do acumulador no LDR0 ~ LDR7
-tmp(12)	 := STA & "100000001"; -- STA @257   Aramzena o valor do bit0 do acumulador no LDR8
-tmp(13)	 := STA & "100000010"; -- STA @258   Aramzena o valor do bit0 do acumulador no LDR9
-tmp(14)	 := LDI & "000000000"; -- LDI $0   Carrega acumulador com o valor 0
-tmp(15)	 := STA & "000000000"; -- STA @0   Armazena o valor do acumulador em MEM[0] (constante 0)
-tmp(16)	 := LDI & "000000001"; -- LDI $1   Carrega  acumulador com o valor 1
-tmp(17)	 := STA & "000000001"; -- STA @1   Armazena o valor do acumulador em MEM[1] (constante 1)
-tmp(18)	 := LDI & "000001010"; -- LDI $10   Carrega  acumulador com o valor 10
-tmp(19)	 := STA & "000000010"; -- STA @2   Armazena o valor do acumulador em MEM[2] (constante 10)
-tmp(20)	 := LDI & "000000000"; -- LDI $0   Carrega acumulador com o valor 0
-tmp(21)	 := STA & "000000011"; -- STA @3   Armazena o valor do acumulador em MEM[3] (unidade)
-tmp(22)	 := STA & "000000100"; -- STA @4   Armazena o valor do acumulador em MEM[4] (dezena)
-tmp(23)	 := STA & "000000101"; -- STA @5   Armazena o valor do acumulador em MEM[5] (centena)
-tmp(24)	 := STA & "000000110"; -- STA @6   Armazena o valor do acumulador em MEM[6] (unidade de milhar)
-tmp(25)	 := STA & "000000111"; -- STA @7   Armazena o valor do acumulador em MEM[7] (dezena de milhar)
-tmp(26)	 := STA & "000001000"; -- STA @8   Armazena o valor do acumulador em MEM[8] (centena de milhar)
-tmp(27)	 := LDI & "000001001"; -- LDI $9   Carrega acumulador com o valor 9
-tmp(28)	 := STA & "000001001"; -- STA @9   Armazena o valor do acumulador em MEM[9] (limite de unidade)
-tmp(29)	 := STA & "000001010"; -- STA @10   Armazena o valor do acumulador em MEM[10] (limite de dezena)
-tmp(30)	 := STA & "000001011"; -- STA @11   Armazena o valor do acumulador em MEM[11] (limite de centena)
-tmp(31)	 := STA & "000001100"; -- STA @12   Armazena o valor do acumulador em MEM[12] (limite de unidade de milhar)
-tmp(32)	 := STA & "000001101"; -- STA @13   Armazena o valor do acumulador em MEM[13] (limite de dezena de milhar)
-tmp(33)	 := STA & "000001110"; -- STA @14   Armazena o valor do acumulador em MEM[14] (limite de centena de milhar)
-tmp(34)	 := LDI & "010000000"; -- LDI $128  
-tmp(35)	 := STA & "000010000"; -- STA @16   MEM[16] = Máscara 10000000
-tmp(36)	 := LDI & "001000000"; -- LDI $64  
-tmp(37)	 := STA & "000010001"; -- STA @17   MEM[17] = Máscara 01000000
-tmp(38)	 := LDI & "000100000"; -- LDI $32  
-tmp(39)	 := STA & "000010010"; -- STA @18   MEM[18] = Máscara 00100000
-tmp(40)	 := LDI & "000010000"; -- LDI $16  
-tmp(41)	 := STA & "000010011"; -- STA @19   MEM[19] = Máscara 00010000
-tmp(42)	 := LDI & "000001100"; -- LDI $12  
-tmp(43)	 := STA & "000010100"; -- STA @20   MEM[20] = Máscara 00001100
-tmp(44)	 := LDI & "000001010"; -- LDI $10  
-tmp(45)	 := STA & "000010101"; -- STA @21   MEM[21] = Máscara 00001010
-tmp(46)	 := LDA & "101100000"; -- LDA @352   Carrega no acumulador o valor de KEY0 ------------ Inicia KEY0
-tmp(47)	 := CEQ & "000000000"; -- CEQ @0   Compara com o valor 0
-tmp(48)	 := JEQ & "000110010"; -- JEQ @CHECA_KEY1   Pula para leitura de KEY1 se KEY0 não foi pressionado
-tmp(49)	 := JSR & "000111010"; -- JSR @ROTINA_INCREMENTO   Se KEY0 foi pressionado, segue para sub-rotina de incremento
-tmp(50)	 := LDA & "101100001"; -- LDA @353   Carrega no acumulador o valor de KEY1 ------------ Inicia KEY1
-tmp(51)	 := CEQ & "000000000"; -- CEQ @0   Compara com 0
-tmp(52)	 := JEQ & "000110110"; -- JEQ @CHECA_KEY_RESET   Se KEY1 não foi pressionado, pula para leitura do RESET
-tmp(53)	 := JSR & "001010110"; -- JSR @ROTINA_CONFIGURAÇÃO_LIMITE   Se KEY1 foi pressionado, segue para sub-rotina de configuração de limite
-tmp(54)	 := LDA & "101100100"; -- LDA @356   Carrega no acumulador o valor de KEY_RESET ------------ Inicia KEY_RESET
-tmp(55)	 := CEQ & "000000001"; -- CEQ @1   Compara com 1
-tmp(56)	 := JEQ & "000000000"; -- JEQ @SETUP   Se for igual, vai pro início do programa
-tmp(57)	 := JMP & "000101110"; -- JMP @ROTINA_PRINCIPAL   Ao retornar da sub-rotina, volta ao loop principal
-tmp(58)	 := LDI & "000000000"; -- LDI $0   Carrega acumulador com valor 0 ------------------------------------- ROTINA INCREMENTO (52)
-tmp(59)	 := STA & "111111111"; -- STA @511   Limpa leitura de KEY0
-tmp(60)	 := LDA & "000001001"; -- LDA @9   Carrega no acumulador o limite das unidades 
-tmp(61)	 := CEQ & "000000011"; -- CEQ @3   Compara unidade com seu respectivo limite
-tmp(62)	 := JEQ & "001000000"; -- JEQ @VERIFICA_DEZENA   Se for igual, verifica as dezenas
-tmp(63)	 := JMP & "001000011"; -- JMP @INCREMENTA_UNIDADE   Se não for igual, segue direto para a parte de incrementa
-tmp(64)	 := LDA & "000001010"; -- LDA @10   Carrega no acumulador o limite das dezenas
-tmp(65)	 := CEQ & "000000100"; -- CEQ @4   Compara dezena com seu respectivo limite
-tmp(66)	 := JEQ & "010101011"; -- JEQ @ROTINA_FIM_PROGRAMA   Se for igual, pula para o fim do programa (houve estouro)
-tmp(67)	 := LDA & "000000011"; -- LDA @3   Carrega no acumulador o valor das unidades -------- incrementa unidade
-tmp(68)	 := SOMA & "000000001"; -- SOMA @1   Soma um nesse valor
-tmp(69)	 := STA & "000000011"; -- STA @3   Atualiza o valor das unidades na memória
-tmp(70)	 := STA & "100100000"; -- STA @288   Atualiza o valor do display hexadecimal das unidades
-tmp(71)	 := LDA & "000000010"; -- LDA @2   Carrega no acumulador o valor 10
-tmp(72)	 := CEQ & "000000011"; -- CEQ @3   Compara unidades com 10
-tmp(73)	 := JEQ & "001001011"; -- JEQ @CORRIGE_UNIDADE   Se estourou as unidades, atualiza
-tmp(74)	 := RET & "000000000"; -- RET #   Se não estourou, retorna ao loop principal
-tmp(75)	 := LDI & "000000000"; -- LDI $0   Houve estouro de unidades => Carrega acumulador com 0
-tmp(76)	 := STA & "000000011"; -- STA @3   Grava 0 no contador das unidades
-tmp(77)	 := STA & "100100000"; -- STA @288   Grava 0 no display hexadecimal das unidades
-tmp(78)	 := LDA & "000000100"; -- LDA @4   Carrega no acumulador o valor das DEZENAS ----------- incrementa dezena
-tmp(79)	 := SOMA & "000000001"; -- SOMA @1   Soma um nesse valor
-tmp(80)	 := STA & "000000100"; -- STA @4   Atualiza o valor das dezenas na memória
-tmp(81)	 := STA & "100100001"; -- STA @289   Atualiza o valor do display hexadecimal das dezenas
-tmp(82)	 := LDA & "000000010"; -- LDA @2   Carrega no acumulador o valor 10
-tmp(83)	 := CEQ & "000000100"; -- CEQ @4   Compara dezenas com 10
-tmp(84)	 := JEQ & "010101011"; -- JEQ @ROTINA_FIM_PROGRAMA   Se estourou as dezenas, estourou o limite => vai para o final do programa
-tmp(85)	 := RET & "000000000"; -- RET #   Se não estourou, retorna ao loop principal
-tmp(86)	 := LDI & "000000001";
-tmp(87)	 := STA & "100000001";
-tmp(88)	 := LDI & "000000000"; -- LDI $0   Carrega acumulador com 0 ---------------------------- ROTINA CONFIGURAÇÃO DE LIMITE
-tmp(89)	 := STA & "111111110"; -- STA @510   Limpa leitura de KEY1
-tmp(90)	 := LDA & "101100001"; -- LDA @353   Carrega o valor de KEY1 no acumulador 
-tmp(91)	 := CEQ & "000000000"; -- CEQ @0   Compara KEY1 com 0
-tmp(92)	 := JEQ & "001011010"; -- JEQ @LE_KEY1_1   Se for igual (não pressionado), volta à leitura de KEY1
-tmp(93)	 := LDA & "101000000"; -- LDA @320   Carrega no acumulador o valor de SW07 (considere que vai de 0 a 9)
-tmp(94)	 := ANDOP & "000010000";
-tmp(95)	 := CEQ & "000010000"; -- CEQ @16   Aplica máscara
-tmp(96)	 := JEQ & "001110111";
-tmp(97)	 := LDA & "101000000";
-tmp(98)	 := ANDOP & "000010001";
-tmp(99)	 := CEQ & "000010001";
-tmp(100)	 := JEQ & "001110111";
-tmp(101)	 := LDA & "101000000";
-tmp(102)	 := ANDOP & "000010010";
-tmp(103)	 := CEQ & "000010010";
-tmp(104)	 := JEQ & "001110111";
-tmp(105)	 := LDA & "101000000";
-tmp(106)	 := ANDOP & "000010011";
-tmp(107)	 := CEQ & "000010011";
-tmp(108)	 := JEQ & "001110111";
-tmp(109)	 := LDA & "101000000";
-tmp(110)	 := ANDOP & "000010100";
-tmp(111)	 := CEQ & "000010100";
-tmp(112)	 := JEQ & "001110111";
-tmp(113)	 := LDA & "101000000";
-tmp(114)	 := ANDOP & "000010101";
-tmp(115)	 := CEQ & "000010101"; -- CEQ @21   Aplica máscara
-tmp(116)	 := JEQ & "001110111";
-tmp(117)	 := LDA & "101000000";
-tmp(118)	 := JMP & "001111001"; -- JMP @GRAVA_LIMITE_UNIDADE   Limite permitido
-tmp(119)	 := LDI & "000001001"; -- LDI $9   Limite não permitido, então passa a ser 9
-tmp(120)	 := JMP & "001111001";
-tmp(121)	 := STA & "000001001"; -- STA @9   Grava leitura das chaves na memória para limite das unidades
-tmp(122)	 := LDI & "000000001"; -- LDI $1   Carrega 1 no acumulador
-tmp(123)	 := STA & "100000000"; -- STA @256   Grava em LEDR07 para confirmar primeira configuração
-tmp(124)	 := LDI & "000000000"; -- LDI $0   Carrega acumulador com 0
-tmp(125)	 := STA & "111111110"; -- STA @510   Limpa leitura de KEY1
-tmp(126)	 := LDA & "101100001"; -- LDA @353   Carrega o valor de KEY1 no acumulador ----- config. dezenas
-tmp(127)	 := CEQ & "000000000"; -- CEQ @0   Compara KEY1 com 0
-tmp(128)	 := JEQ & "001111110"; -- JEQ @LE_KEY1_2   Se for igual (não pressionado), volta à leitura de KEY1
-tmp(129)	 := LDA & "101000000"; -- LDA @320   Carrega no acumulador o valor de SW07 (considere que vai de 0 a 9)
-tmp(130)	 := ANDOP & "000010000";
-tmp(131)	 := CEQ & "000010000"; -- CEQ @16   Aplica máscara
-tmp(132)	 := JEQ & "010011011";
-tmp(133)	 := LDA & "101000000";
-tmp(134)	 := ANDOP & "000010001";
-tmp(135)	 := CEQ & "000010001";
-tmp(136)	 := JEQ & "010011011";
-tmp(137)	 := LDA & "101000000";
-tmp(138)	 := ANDOP & "000010010";
-tmp(139)	 := CEQ & "000010010";
-tmp(140)	 := JEQ & "010011011";
-tmp(141)	 := LDA & "101000000";
-tmp(142)	 := ANDOP & "000010011";
-tmp(143)	 := CEQ & "000010011";
-tmp(144)	 := JEQ & "010011011";
-tmp(145)	 := LDA & "101000000";
-tmp(146)	 := ANDOP & "000010100";
-tmp(147)	 := CEQ & "000010100";
-tmp(148)	 := JEQ & "010011011";
-tmp(149)	 := LDA & "101000000";
-tmp(150)	 := ANDOP & "000010101";
-tmp(151)	 := CEQ & "000010101";
-tmp(152)	 := JEQ & "010011011";
-tmp(153)	 := LDA & "101000000";
-tmp(154)	 := JMP & "010011101";
-tmp(155)	 := LDI & "000001001"; -- LDI $9   Limite não permitido, então passa a ser 9
-tmp(156)	 := JMP & "010011101";
-tmp(157)	 := STA & "000001010"; -- STA @10   Grava leitura das chaves na memória para limite das dezenas
-tmp(158)	 := LDI & "000000011"; -- LDI $3   Carrega 3 no acumulador
-tmp(159)	 := STA & "100000000"; -- STA @256   Grava em LEDR07 para confirmar segunda configuração
-tmp(160)	 := LDI & "000000000"; -- LDI $0   Carrega acumulador com 0
-tmp(161)	 := STA & "111111110"; -- STA @510   Limpa leitura de KEY1
-tmp(162)	 := LDA & "101100001"; -- LDA @353   Carrega o valor de KEY1 no acumulador ----- pressionar para retornar ao loop
-tmp(163)	 := CEQ & "000000000"; -- CEQ @0   Compara KEY1 com 0
-tmp(164)	 := JEQ & "010100010"; -- JEQ @LE_KEY1_3   Se for igual (não pressionado), volta à leitura de KEY1
-tmp(165)	 := LDI & "000000000"; -- LDI $0   Carrega acumulador com 0
-tmp(166)	 := STA & "100000000"; -- STA @256   Grava nos LEDR07 (apaga os LEDs)
-tmp(167)	 := STA & "100000001"; -- STA @257   Apaga LDER8
-tmp(168)	 := LDI & "000000000"; -- LDI $0   Carrega acumulador com 0
-tmp(169)	 := STA & "111111110"; -- STA @510   Limpa leitura de KEY1
-tmp(170)	 := RET & "000000000";
-tmp(171)	 := LDI & "000000001"; -- LDI $1   Carrega acumulador com 1 --------------------------- FIM DO PROGRAMA (104)
-tmp(172)	 := STA & "100000010"; -- STA @258   Grava valor no LEDR9 (acende o LEDR9)
-tmp(173)	 := LDA & "101100100";
-tmp(174)	 := CEQ & "000000001";
-tmp(175)	 := JEQ & "000000000";
-tmp(176)	 := NOP & "000000000";
-tmp(177)	 := JMP & "010101101"; -- JMP @LOOP_INFINITO   Fim. Fica preso neste laço até resetar.
+tmp(0)	 := LDI & R0 & "000000000";
+tmp(1)	 := STA & R0 & "000000000"; --  MEM[0] = 0
+tmp(2)	 := LDI & R0 & "000000001";
+tmp(3)	 := STA & R0 & "000000001"; --  MEM[1] = 1
+tmp(4)	 := LDI & R0 & "000000010";
+tmp(5)	 := STA & R0 & "000000010"; --  MEM[2] = 2
+tmp(6)	 := LDI & R0 & "000000011";
+tmp(7)	 := STA & R0 & "000000011"; --  MEM[3] = 3
+tmp(8)	 := LDI & R0 & "000000100";
+tmp(9)	 := STA & R0 & "000000100"; --  MEM[4] = 4
+tmp(10)	 := LDI & R0 & "000000110";
+tmp(11)	 := STA & R0 & "000000110"; --  MEM[6] = 6
+tmp(12)	 := LDI & R0 & "000001010";
+tmp(13)	 := STA & R0 & "000001010"; --  MEM[10] = 10
+tmp(14)	 := LDI & R0 & "000000000";
+tmp(15)	 := STA & R0 & "100100000"; --  Zera HEX0
+tmp(16)	 := STA & R0 & "100100001"; --  Zera HEX1
+tmp(17)	 := STA & R0 & "100100010"; --  Zera HEX2
+tmp(18)	 := STA & R0 & "100100011"; --  Zera HEX3
+tmp(19)	 := STA & R0 & "100100100"; --  Zera HEX4
+tmp(20)	 := STA & R0 & "100100101"; --  Zera HEX5
+tmp(21)	 := STA & R0 & "111111111"; --  Limpa KEY0
+tmp(22)	 := STA & R0 & "111111110"; --  Limpa KEY1
+tmp(23)	 := STA & R0 & "111111101"; --  Limpa KEY_RESET
+tmp(24)	 := STA & R0 & "111111100"; --  Limpa Leitura da base de tempo
+tmp(25)	 := STA & R0 & "100000000"; --  Apaga LEDR0~7
+tmp(26)	 := STA & R0 & "100000001"; --  Apaga LEDR8
+tmp(27)	 := STA & R0 & "100000010"; --  Apaga LEDR9
+tmp(28)	 := STA & R0 & "000010100"; --  Zera Unidade de segundo
+tmp(29)	 := STA & R0 & "000010101"; --  Zera Dezena de segundo
+tmp(30)	 := STA & R0 & "000010110"; --  Zera Unidade de minuto
+tmp(31)	 := STA & R0 & "000010111"; --  Zera Dezena de minuto
+tmp(32)	 := STA & R0 & "000011000"; --  Zera Unidade de hora
+tmp(33)	 := STA & R0 & "000011001"; --  Zera Dezena de hora
+tmp(34)	 := STA & R0 & "000011100"; --  Zera flag de alarme ligado
+tmp(35)	 := STA & R0 & "000011101"; --  Zera flag de alarme acionado
+tmp(36)	 := STA & R0 & "000011110"; --  Zera unidade de minuto de alarme
+tmp(37)	 := STA & R0 & "000011111"; --  Zera dezena de minuto de alarme
+tmp(38)	 := STA & R0 & "000100000"; --  Zera unidade de hora de alarme
+tmp(39)	 := STA & R0 & "000100001"; --  Zera dezena de hora de alarme
+tmp(40)	 := JMP & R0 & "010001000";
+tmp(41)	 := LDI & R0 & "000000001"; --  R0 = 1 (Início da sub-rotina de setup do relógio)
+tmp(42)	 := STA & R0 & "100000010"; --  Acende LEDR9
+tmp(43)	 := LDI & R0 & "000000000"; --  R0 = 0
+tmp(44)	 := STA & R0 & "111111111"; --  Limpa leitura de KEY0
+tmp(45)	 := LDA & R0 & "101100000"; --  Lê KEY0
+tmp(46)	 := CEQ & R0 & "000000001"; --  Verifica se KEY0 == 1
+tmp(47)	 := JEQ & R0 & "000110001"; --  Desvia para configuração da unidade de minuto
+tmp(48)	 := JMP & R0 & "000101101";
+tmp(49)	 := LDI & R0 & "000000000"; --  R0 = 0
+tmp(50)	 := STA & R0 & "111111111"; --  Limpa leitura de KEY0
+tmp(51)	 := LDA & R0 & "101000000"; --  R0 = SW0 ~ SW7
+tmp(52)	 := CLT & R0 & "000001010"; --  Verifica se SW < 10
+tmp(53)	 := JLT & R0 & "000110111";
+tmp(54)	 := JMP & R0 & "000111010";
+tmp(55)	 := STA & R0 & "000010110"; --  Grava leitura das chaves no valor de unidade de minuto
+tmp(56)	 := STA & R0 & "100100010"; --  Grava leitura das chaves no HEX2
+tmp(57)	 := JMP & R0 & "000111101";
+tmp(58)	 := LDI & R0 & "000000000";
+tmp(59)	 := STA & R0 & "000010110"; --  Grava 0 nas unidades de minuto
+tmp(60)	 := STA & R0 & "100100010"; --  Grava 0 no HEX2
+tmp(61)	 := LDI & R0 & "000000001"; --  R0 = 1
+tmp(62)	 := STA & R0 & "100000000"; --  Acende LEDR0 para indicar conf. de unidade de minuto
+tmp(63)	 := LDA & R0 & "101100000"; --  Lê KEY0
+tmp(64)	 := CEQ & R0 & "000000001"; --  Verifica se KEY0 == 1
+tmp(65)	 := JEQ & R0 & "001000011"; --  Desvia para configuração da unidade de minuto
+tmp(66)	 := JMP & R0 & "000111111";
+tmp(67)	 := LDI & R0 & "000000000"; --  R0 = 0
+tmp(68)	 := STA & R0 & "111111111"; --  Limpa leitura de KEY0
+tmp(69)	 := LDA & R0 & "101000000"; --  R0 = SW0 ~ SW7
+tmp(70)	 := CLT & R0 & "000000110"; --  Verifica se SW < 6
+tmp(71)	 := JLT & R0 & "001001001";
+tmp(72)	 := JMP & R0 & "001001100";
+tmp(73)	 := STA & R0 & "000010111"; --  Grava leitura das chaves no valor de dezena de minuto
+tmp(74)	 := STA & R0 & "100100011"; --  Grava leitura das chaves no HEX3
+tmp(75)	 := JMP & R0 & "001001111";
+tmp(76)	 := LDI & R0 & "000000000";
+tmp(77)	 := STA & R0 & "000010111"; --  Grava 0 nas dezenas de minuto
+tmp(78)	 := STA & R0 & "100100011"; --  Grava 0 no HEX3
+tmp(79)	 := LDI & R0 & "000000011"; --  R0 = 3
+tmp(80)	 := STA & R0 & "100000000"; --  Acende LEDR1 para indicar conf. de dezena de minuto
+tmp(81)	 := LDA & R0 & "101100000"; --  Lê KEY0
+tmp(82)	 := CEQ & R0 & "000000001"; --  Verifica se KEY0 == 1
+tmp(83)	 := JEQ & R0 & "001010101"; --  Desvia para configuração da unidade de hora
+tmp(84)	 := JMP & R0 & "001010001";
+tmp(85)	 := LDI & R0 & "000000000"; --  R0 = 0
+tmp(86)	 := STA & R0 & "111111111"; --  Limpa leitura de KEY0
+tmp(87)	 := LDA & R0 & "101000000"; --  R0 = SW0 ~ SW7
+tmp(88)	 := CLT & R0 & "000001010"; --  Verifica se SW < 10
+tmp(89)	 := JLT & R0 & "001011011";
+tmp(90)	 := JMP & R0 & "001011110";
+tmp(91)	 := STA & R0 & "000011000"; --  Grava leitura das chaves no valor de unidade de hora
+tmp(92)	 := STA & R0 & "100100100"; --  Grava leitura das chaves no HEX4
+tmp(93)	 := JMP & R0 & "001100001";
+tmp(94)	 := LDI & R0 & "000000000";
+tmp(95)	 := STA & R0 & "000011000"; --  Grava 0 nas unidades de hora
+tmp(96)	 := STA & R0 & "100100100"; --  Grava 0 no HEX4
+tmp(97)	 := LDI & R0 & "000000111"; --  R0 = 7
+tmp(98)	 := STA & R0 & "100000000"; --  Acende LEDR2 para indicar conf. de unidade de hora
+tmp(99)	 := LDA & R0 & "101100000"; --  Lê KEY0
+tmp(100)	 := CEQ & R0 & "000000001"; --  Verifica se KEY0 == 1
+tmp(101)	 := JEQ & R0 & "001100111"; --  Desvia para configuração da dezena de hora
+tmp(102)	 := JMP & R0 & "001100011";
+tmp(103)	 := LDI & R0 & "000000000"; --  R0 = 0
+tmp(104)	 := STA & R0 & "111111111"; --  Limpa leitura de KEY0
+tmp(105)	 := LDA & R0 & "101000000"; --  R0 = SW0 ~ SW7
+tmp(106)	 := STA & R0 & "000011001"; --  Grava dezena de hora
+tmp(107)	 := CLT & R0 & "000000011"; --  Verifica se SW < 3
+tmp(108)	 := JLT & R0 & "001101110";
+tmp(109)	 := JMP & R0 & "001111010";
+tmp(110)	 := LDA & R1 & "000011000"; --  Carrega em R1 unidade de hora
+tmp(111)	 := CLT & R1 & "000000100"; --  Compara R1 < 4
+tmp(112)	 := JLT & R0 & "001110111";
+tmp(113)	 := LDA & R1 & "000011001"; --  Carrega em R1 dezena de hora
+tmp(114)	 := CLT & R1 & "000000010"; --  Compara R1 < 2
+tmp(115)	 := JLT & R0 & "001110111";
+tmp(116)	 := LDI & R1 & "000000011"; --  R1 = 3
+tmp(117)	 := STA & R1 & "000011000"; --  Atribui 3 à unidade de hora
+tmp(118)	 := STA & R1 & "100100100"; --  Grava 3 no HEX4
+tmp(119)	 := STA & R0 & "000011001"; --  Grava leitura das chaves no valor de dezena de hora
+tmp(120)	 := STA & R0 & "100100101"; --  Grava leitura das chaves no HEX4
+tmp(121)	 := JMP & R0 & "001111101";
+tmp(122)	 := LDI & R0 & "000000000";
+tmp(123)	 := STA & R0 & "000011001"; --  Grava 0 nas dezenas de hora
+tmp(124)	 := STA & R0 & "100100101"; --  Grava 0 no HEX5
+tmp(125)	 := LDI & R0 & "000001111"; --  R0 = 15
+tmp(126)	 := STA & R0 & "100000000"; --  Acende LEDR3 para indicar conf. de dezena de hora
+tmp(127)	 := LDA & R0 & "101100000"; --  Lê KEY0
+tmp(128)	 := CEQ & R0 & "000000001"; --  Verifica se KEY0 == 1
+tmp(129)	 := JEQ & R0 & "010000011"; --  Desvia para configuração da dezena de hora
+tmp(130)	 := JMP & R0 & "001111111";
+tmp(131)	 := LDI & R0 & "000000000"; --  R0 = 0
+tmp(132)	 := STA & R0 & "111111111"; --  Limpa leitura de KEY0
+tmp(133)	 := STA & R0 & "100000010"; --  Apaga LEDR9
+tmp(134)	 := STA & R0 & "100000000"; --  Apaga LEDR0~7
+tmp(135)	 := RET & R0 & "000000000";
+tmp(136)	 := LDA & R0 & "101100101"; --  Lê base de tempo do relógio
+tmp(137)	 := CEQ & R0 & "000000001"; --  Se for 1, desvia para sub-rotina de incremento de segundo
+tmp(138)	 := JEQ & R0 & "010011000";
+tmp(139)	 := LDA & R0 & "101100000"; --  Lê KEY0
+tmp(140)	 := CEQ & R0 & "000000001"; --  Se for 1, desvia para sub-rotina de configuração de horário
+tmp(141)	 := JEQ & R0 & "010011010";
+tmp(142)	 := LDA & R0 & "101100100"; --  Lê KEY_RESET
+tmp(143)	 := CEQ & R0 & "000000001"; --  Se for 1, desvia para sub-rotina de configuração de alarme
+tmp(144)	 := JEQ & R0 & "010011100";
+tmp(145)	 := LDA & R0 & "101100001"; --  Lê KEY1
+tmp(146)	 := CEQ & R0 & "000000001"; --  Se for 1, desvia para sub-rotina de desativar sinalização de alarme
+tmp(147)	 := JEQ & R0 & "010100000";
+tmp(148)	 := LDA & R0 & "000011101"; --  Lê flag de alarme ativado
+tmp(149)	 := CEQ & R0 & "000000001"; --  Se for 1, desvia para sub-rotina de ativação do alarme
+tmp(150)	 := JEQ & R0 & "010011110";
+tmp(151)	 := JMP & R0 & "010001000";
+tmp(152)	 := JSR & R0 & "010100110"; --  Desvia para sub-rotina de incremento de segundo
+tmp(153)	 := JMP & R0 & "010001000"; --  Retorna para o início do loop
+tmp(154)	 := JSR & R0 & "000101001";
+tmp(155)	 := JMP & R0 & "010001000";
+tmp(156)	 := JSR & R0 & "100001111";
+tmp(157)	 := JMP & R0 & "010001000";
+tmp(158)	 := JSR & R0 & "101111001";
+tmp(159)	 := JMP & R0 & "010001000";
+tmp(160)	 := JSR & R0 & "010100010";
+tmp(161)	 := JMP & R0 & "010001000";
+tmp(162)	 := LDI & R0 & "000000000"; --  Carrega R0 com 0
+tmp(163)	 := STA & R0 & "111111110"; --  Limpa leitura de KEY1
+tmp(164)	 := STA & R0 & "100000000"; --  Apaga LEDR0~7
+tmp(165)	 := RET & R0 & "000000000";
+tmp(166)	 := LDI & R0 & "000000000"; --  R0 = 0
+tmp(167)	 := STA & R0 & "111111100"; --  Limpa leitura da base de tempo de 1s
+tmp(168)	 := LDI & R0 & "000000001"; --  R0 = 1
+tmp(169)	 := SOMA & R0 & "000010100"; --  Soma 1 no contador de unidades de segundos e armazena em R0
+tmp(170)	 := CLT & R0 & "000001010"; --  Compara R0 < 10
+tmp(171)	 := JLT & R0 & "010101101";
+tmp(172)	 := JMP & R0 & "010110000";
+tmp(173)	 := STA & R0 & "000010100"; --  Atualiza contador de unidade de segundo
+tmp(174)	 := STA & R0 & "100100000"; --  Atualiza unidade de segundo em HEX0
+tmp(175)	 := RET & R0 & "000000000";
+tmp(176)	 := LDI & R0 & "000000000";
+tmp(177)	 := STA & R0 & "000010100"; --  Zera contador de unidade de segundo
+tmp(178)	 := STA & R0 & "100100000"; --  Zera HEX0
+tmp(179)	 := LDA & R0 & "000010101"; --  Carrega em R0 valor de dezena de segundo
+tmp(180)	 := SOMA & R0 & "000000001"; --  R0 += 1 (incrementa dezena de segundo)
+tmp(181)	 := CLT & R0 & "000000110"; --  Compara R0 < 6
+tmp(182)	 := JLT & R0 & "010111000"; --  Se R0 < 6, desvia para incremento de dezena de segundo
+tmp(183)	 := JMP & R0 & "010111011"; --  Se R0 >= 6, desvia para atualização
+tmp(184)	 := STA & R0 & "000010101"; --  Atualiza contador de dezena de segundo
+tmp(185)	 := STA & R0 & "100100001"; --  Atualiza HEX1
+tmp(186)	 := RET & R0 & "000000000";
+tmp(187)	 := LDI & R0 & "000000000";
+tmp(188)	 := STA & R0 & "000010101"; --  Zera contador de dezena de segundo
+tmp(189)	 := STA & R0 & "100100001"; --  Zera HEX1
+tmp(190)	 := LDA & R0 & "000010110"; --  Carrega em R0 valor de unidade de minuto
+tmp(191)	 := SOMA & R0 & "000000001"; --  R0 += 1 (incrementa unidade de minuto)
+tmp(192)	 := CLT & R0 & "000001010"; --  Compara R0 < 10
+tmp(193)	 := JLT & R0 & "011000011"; --  Se R0 < 10, desvia para incremento de unidade de minuto
+tmp(194)	 := JMP & R0 & "011000110"; --  Se R0 >= 10, desvia para atualização
+tmp(195)	 := STA & R0 & "000010110"; --  Atualiza contador de unidade de minuto
+tmp(196)	 := STA & R0 & "100100010"; --  Atualiza HEX2
+tmp(197)	 := JMP & R0 & "011111000";
+tmp(198)	 := LDI & R0 & "000000000";
+tmp(199)	 := STA & R0 & "000010110"; --  Zera contador de unidade de minuto
+tmp(200)	 := STA & R0 & "100100010"; --  Zera HEX2
+tmp(201)	 := LDA & R0 & "000010111"; --  Carrega em R0 valor de dezena de minuto
+tmp(202)	 := SOMA & R0 & "000000001"; --  R0 += 1 (incrementa dezena de minuto)
+tmp(203)	 := CLT & R0 & "000000110"; --  Compara R0 < 6
+tmp(204)	 := JLT & R0 & "011001110"; --  Se R0 < 6, desvia para incremento de dezena de minuto
+tmp(205)	 := JMP & R0 & "011010001"; --  Se R0 >= 6, desvia para atualização
+tmp(206)	 := STA & R0 & "000010111"; --  Atualiza contador de dezena de minuto
+tmp(207)	 := STA & R0 & "100100011"; --  Atualiza HEX3
+tmp(208)	 := JMP & R0 & "011111000";
+tmp(209)	 := LDI & R0 & "000000000";
+tmp(210)	 := STA & R0 & "000010111"; --  Zera contador de dezena de minuto
+tmp(211)	 := STA & R0 & "100100011"; --  Zera HEX3
+tmp(212)	 := LDA & R0 & "000011000"; --  Carrega em R0 valor de unidade de hora
+tmp(213)	 := SOMA & R0 & "000000001"; --  R0 += 1 (incrementa unidade de hora)
+tmp(214)	 := CLT & R0 & "000001010"; --  Compara R0 < 10
+tmp(215)	 := JLT & R0 & "011011001"; --  Se R0 < 10, desvia para incremento de unidade de hora
+tmp(216)	 := JMP & R0 & "011101001"; --  Se R0 >= 10, desvia para atualização
+tmp(217)	 := STA & R0 & "000011000"; --  Atualiza contador de unidade de hora
+tmp(218)	 := STA & R0 & "100100100"; --  Atualiza HEX4
+tmp(219)	 := LDA & R0 & "000011000"; --  Carrega em R0 contador de unidade de hora
+tmp(220)	 := CEQ & R0 & "000000100"; --  Compara R0 == 4
+tmp(221)	 := JEQ & R0 & "011011111";
+tmp(222)	 := JMP & R0 & "011111000";
+tmp(223)	 := LDA & R1 & "000011001"; --  Carrega R1 com dezena de hora
+tmp(224)	 := CEQ & R1 & "000000010"; --  Compara R1 == 2
+tmp(225)	 := JEQ & R0 & "011100011";
+tmp(226)	 := JMP & R0 & "011111000";
+tmp(227)	 := LDI & R0 & "000000000"; --  R0 = 0
+tmp(228)	 := STA & R0 & "000011000"; --  Zera contador de unidade de hora
+tmp(229)	 := STA & R0 & "000011001"; --  Zera contador de dezena de hora
+tmp(230)	 := STA & R0 & "100100100"; --  Zera HEX4
+tmp(231)	 := STA & R0 & "100100101"; --  Zera HEX5
+tmp(232)	 := JMP & R0 & "011111000";
+tmp(233)	 := LDI & R0 & "000000000";
+tmp(234)	 := STA & R0 & "000011000"; --  Zera contador de unidade de hora
+tmp(235)	 := STA & R0 & "100100100"; --  Zera HEX4
+tmp(236)	 := LDA & R0 & "000011001"; --  Carrega em R0 valor de dezena de hora
+tmp(237)	 := SOMA & R0 & "000000001"; --  R0 += 1 (incrementa dezena de hora)
+tmp(238)	 := CLT & R0 & "000000011"; --  Compara R0 < 3
+tmp(239)	 := JLT & R0 & "011110001"; --  Se R0 < 3, desvia para incremento de dezena de hora
+tmp(240)	 := JMP & R0 & "011110100"; --  Se R0 >= 3, desvia para atualização
+tmp(241)	 := STA & R0 & "000011001"; --  Atualiza contador de dezena de hora
+tmp(242)	 := STA & R0 & "100100101"; --  Atualiza HEX5
+tmp(243)	 := JMP & R0 & "011111000";
+tmp(244)	 := LDI & R0 & "000000000";
+tmp(245)	 := STA & R0 & "000011001"; --  Zera contador de dezena de hora
+tmp(246)	 := STA & R0 & "100100101"; --  Zera HEX5
+tmp(247)	 := JMP & R0 & "011111000";
+tmp(248)	 := LDA & R0 & "000011100"; --  Carrega R0 com flag de alarme ligado
+tmp(249)	 := CEQ & R0 & "000000001"; --  Verifica se flag vale 1
+tmp(250)	 := JEQ & R0 & "011111100"; --  Se ativado, inicia conferência do alarme
+tmp(251)	 := JMP & R0 & "100001110"; --  Se não, pula para o fim dessa sub-rotina
+tmp(252)	 := LDA & R0 & "000010110"; --  Carrega R0 com unidade de minuto
+tmp(253)	 := CEQ & R0 & "000011110"; --  Checa se bate com unidade de minuto de alarme
+tmp(254)	 := JEQ & R0 & "100000000";
+tmp(255)	 := JMP & R0 & "100001110";
+tmp(256)	 := LDA & R0 & "000010111"; --  Carrega R0 com dezena de minuto
+tmp(257)	 := CEQ & R0 & "000011111"; --  Checa se bate com dezena de minuto de alarme
+tmp(258)	 := JEQ & R0 & "100000100";
+tmp(259)	 := JMP & R0 & "100001110";
+tmp(260)	 := LDA & R0 & "000011000"; --  Carrega R0 com unidade de hora
+tmp(261)	 := CEQ & R0 & "000100000"; --  Checa se bate com unidade de hora de alarme
+tmp(262)	 := JEQ & R0 & "100001000";
+tmp(263)	 := JMP & R0 & "100001110";
+tmp(264)	 := LDA & R0 & "000011001"; --  Carrega R0 com dezena de hora
+tmp(265)	 := CEQ & R0 & "000100001"; --  Checa se bate com dezena de hora de alarme
+tmp(266)	 := JEQ & R0 & "100001100"; --  Por fim, se bater, flag de alarme acionado = 1
+tmp(267)	 := JMP & R0 & "100001110";
+tmp(268)	 := LDI & R0 & "000000001"; --  R0 = 1
+tmp(269)	 := STA & R0 & "000011101"; --  Flag de alarme acionado = 1
+tmp(270)	 := RET & R0 & "000000000";
+tmp(271)	 := LDI & R0 & "000000001"; --  R0 = 1 (Início da sub-rotina de setup do alarme)
+tmp(272)	 := STA & R0 & "100000001"; --  Acende LEDR8
+tmp(273)	 := LDI & R0 & "000000000"; --  R0 = 0
+tmp(274)	 := STA & R0 & "111111101"; --  Limpa leitura de KEY_RESET
+tmp(275)	 := STA & R0 & "100000000"; --  Apaga LEDR0~7
+tmp(276)	 := LDA & R0 & "101100100"; --  Lê KEY_RESET
+tmp(277)	 := CEQ & R0 & "000000001"; --  Verifica se KEY_RESET == 1
+tmp(278)	 := JEQ & R0 & "100011000"; --  Desvia para configuração da unidade de minuto
+tmp(279)	 := JMP & R0 & "100010100";
+tmp(280)	 := LDI & R0 & "000000000"; --  R0 = 0
+tmp(281)	 := STA & R0 & "111111101"; --  Limpa leitura de KEY_RESET
+tmp(282)	 := LDA & R0 & "101000000"; --  R0 = SW0 ~ SW7
+tmp(283)	 := CLT & R0 & "000001010"; --  Verifica se SW < 10
+tmp(284)	 := JLT & R0 & "100011110";
+tmp(285)	 := JMP & R0 & "100100001";
+tmp(286)	 := STA & R0 & "000011110"; --  Grava leitura das chaves no valor do alarme de unidade de minuto
+tmp(287)	 := STA & R0 & "100100010"; --  Grava leitura das chaves no HEX2
+tmp(288)	 := JMP & R0 & "100100100";
+tmp(289)	 := LDI & R0 & "000000000";
+tmp(290)	 := STA & R0 & "000011110"; --  Grava 0 nas unidades de minuto
+tmp(291)	 := STA & R0 & "100100010"; --  Grava 0 no HEX2
+tmp(292)	 := LDI & R0 & "000000001"; --  R0 = 1
+tmp(293)	 := STA & R0 & "100000000"; --  Acende LEDR0 para indicar conf. de unidade de minuto
+tmp(294)	 := LDA & R0 & "101100100"; --  Lê KEY_RESET
+tmp(295)	 := CEQ & R0 & "000000001"; --  Verifica se KEY_RESET == 1
+tmp(296)	 := JEQ & R0 & "100101010"; --  Desvia para configuração do alarme da dezena de minuto
+tmp(297)	 := JMP & R0 & "100100110";
+tmp(298)	 := LDI & R0 & "000000000"; --  R0 = 0
+tmp(299)	 := STA & R0 & "111111101"; --  Limpa leitura de KEY_RESET
+tmp(300)	 := LDA & R0 & "101000000"; --  R0 = SW0 ~ SW7
+tmp(301)	 := CLT & R0 & "000000110"; --  Verifica se SW < 6
+tmp(302)	 := JLT & R0 & "100110000";
+tmp(303)	 := JMP & R0 & "100110011";
+tmp(304)	 := STA & R0 & "000011111"; --  Grava leitura das chaves no valor de alarme de dezena de minuto
+tmp(305)	 := STA & R0 & "100100011"; --  Grava leitura das chaves no HEX3
+tmp(306)	 := JMP & R0 & "100110110";
+tmp(307)	 := LDI & R0 & "000000000";
+tmp(308)	 := STA & R0 & "000011111"; --  Grava 0 nas dezenas de minuto do alarme
+tmp(309)	 := STA & R0 & "100100011"; --  Grava 0 no HEX3
+tmp(310)	 := LDI & R0 & "000000011"; --  R0 = 3
+tmp(311)	 := STA & R0 & "100000000"; --  Acende LEDR1 para indicar conf. de dezena de minuto
+tmp(312)	 := LDA & R0 & "101100100"; --  Lê KEY_RESET
+tmp(313)	 := CEQ & R0 & "000000001"; --  Verifica se KEY_RESET == 1
+tmp(314)	 := JEQ & R0 & "100111100"; --  Desvia para configuração da unidade de hora
+tmp(315)	 := JMP & R0 & "100111000";
+tmp(316)	 := LDI & R0 & "000000000"; --  R0 = 0
+tmp(317)	 := STA & R0 & "111111101"; --  Limpa leitura de KEY_RESET
+tmp(318)	 := LDA & R0 & "101000000"; --  R0 = SW0 ~ SW7
+tmp(319)	 := CLT & R0 & "000001010"; --  Verifica se SW < 10
+tmp(320)	 := JLT & R0 & "101000010";
+tmp(321)	 := JMP & R0 & "101000101";
+tmp(322)	 := STA & R0 & "000100000"; --  Grava leitura das chaves no valor de unidade de hora de alarme
+tmp(323)	 := STA & R0 & "100100100"; --  Grava leitura das chaves no HEX4
+tmp(324)	 := JMP & R0 & "101001000";
+tmp(325)	 := LDI & R0 & "000000000";
+tmp(326)	 := STA & R0 & "000100000"; --  Grava 0 nas unidades de hora de alarme
+tmp(327)	 := STA & R0 & "100100100"; --  Grava 0 no HEX4
+tmp(328)	 := LDI & R0 & "000000111"; --  R0 = 7
+tmp(329)	 := STA & R0 & "100000000"; --  Acende LEDR2 para indicar conf. de unidade de hora
+tmp(330)	 := LDA & R0 & "101100100"; --  Lê KEY_RESET
+tmp(331)	 := CEQ & R0 & "000000001"; --  Verifica se KEY_RESET == 1
+tmp(332)	 := JEQ & R0 & "101001110"; --  Desvia para configuração da dezena de hora de alarme
+tmp(333)	 := JMP & R0 & "101001010";
+tmp(334)	 := LDI & R0 & "000000000"; --  R0 = 0
+tmp(335)	 := STA & R0 & "111111101"; --  Limpa leitura de KEY_RESET
+tmp(336)	 := LDA & R0 & "101000000"; --  R0 = SW0 ~ SW7
+tmp(337)	 := STA & R0 & "000100001"; --  Grava dezena de hora do alarme
+tmp(338)	 := CLT & R0 & "000000011"; --  Verifica se SW < 3
+tmp(339)	 := JLT & R0 & "101010101";
+tmp(340)	 := JMP & R0 & "101100001";
+tmp(341)	 := LDA & R1 & "000100000"; --  Carrega em R1 unidade de hora de alarme
+tmp(342)	 := CLT & R1 & "000000100"; --  Compara R1 < 4
+tmp(343)	 := JLT & R0 & "101011110";
+tmp(344)	 := LDA & R1 & "000100001"; --  Carrega em R1 dezena de hora de alarme
+tmp(345)	 := CLT & R1 & "000000010"; --  Compara R1 < 2
+tmp(346)	 := JLT & R0 & "101011110";
+tmp(347)	 := LDI & R1 & "000000011"; --  R1 = 3
+tmp(348)	 := STA & R1 & "000100001"; --  Atribui 3 à unidade de hora de alarme
+tmp(349)	 := STA & R1 & "100100100"; --  Grava 3 no HEX4
+tmp(350)	 := STA & R0 & "000100001"; --  Grava leitura das chaves no valor de dezena de hora de alarme
+tmp(351)	 := STA & R0 & "100100101"; --  Grava leitura das chaves no HEX4
+tmp(352)	 := JMP & R0 & "101100100";
+tmp(353)	 := LDI & R0 & "000000000";
+tmp(354)	 := STA & R0 & "000100001"; --  Grava 0 nas dezenas de hora de alarme
+tmp(355)	 := STA & R0 & "100100101"; --  Grava 0 no HEX5
+tmp(356)	 := LDI & R0 & "000001111"; --  R0 = 15
+tmp(357)	 := STA & R0 & "100000000"; --  Acende LEDR3 para indicar conf. de dezena de hora
+tmp(358)	 := LDA & R0 & "101100100"; --  Lê KEY_RESET
+tmp(359)	 := CEQ & R0 & "000000001"; --  Verifica se KEY_RESET == 1
+tmp(360)	 := JEQ & R0 & "101101010";
+tmp(361)	 := JMP & R0 & "101100110";
+tmp(362)	 := LDI & R0 & "000000000"; --  R0 = 0
+tmp(363)	 := STA & R0 & "111111101"; --  Limpa leitura de KEY_RESET
+tmp(364)	 := STA & R0 & "100000001"; --  Apaga LEDR8
+tmp(365)	 := STA & R0 & "100000000"; --  Apaga LEDR0~7
+tmp(366)	 := LDA & R0 & "000010110"; --  Carrega em R0 unidades de minuto
+tmp(367)	 := STA & R0 & "100100010"; --  Grava em HEX2 unidades de minuto
+tmp(368)	 := LDA & R0 & "000010111"; --  Carrega em R0 dezenas de minuto
+tmp(369)	 := STA & R0 & "100100011"; --  Grava em HEX3 dezenas de minuto
+tmp(370)	 := LDA & R0 & "000011000"; --  Carrega em R0 unidades de hora
+tmp(371)	 := STA & R0 & "100100100"; --  Grava em HEX4 unidades de hora
+tmp(372)	 := LDA & R0 & "000011001"; --  Carrega em R0 dezenas de hora
+tmp(373)	 := STA & R0 & "100100101"; --  Grava em HEX5 dezenas de hora
+tmp(374)	 := LDI & R0 & "000000001"; --  Carrega 1 em R0
+tmp(375)	 := STA & R0 & "000011100"; --  Flag alarme ligado = 1
+tmp(376)	 := RET & R0 & "000000000";
+tmp(377)	 := LDI & R0 & "011111111"; --  Carrega R0 com 255
+tmp(378)	 := STA & R0 & "100000000"; --  Liga todos os LEDS R0~7
+tmp(379)	 := LDI & R0 & "000000000";
+tmp(380)	 := STA & R0 & "000011100"; --  Zera flag de alarme ligado (desliga)
+tmp(381)	 := STA & R0 & "000011101"; --  Zera flag de alamre acionado
+tmp(382)	 := RET & R0 & "000000000";

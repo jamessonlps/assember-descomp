@@ -151,5 +151,5 @@ class Assembler:
             return None
             
 
-my_assemb = Assembler(input_path='./teste.txt', output_path='./output/teste.txt')
+my_assemb = Assembler()
 my_assemb.translate()
